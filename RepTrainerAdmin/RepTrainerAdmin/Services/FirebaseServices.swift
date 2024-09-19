@@ -9,7 +9,7 @@ import Foundation
 import Firebase
 import FirebaseFirestore
 import FirebaseAuth
-
+import FirebaseStorage
 
 /// FirebaseService
 final class FirebaseService {
@@ -172,7 +172,7 @@ final class FirebaseService {
           }
         }
       case .failure(let error):
-        print("Error decoding studio fetch Demo Models: \(error)")
+        print("Error decoding studio fetch Demo Run Models: \(error)")
         DispatchQueue.main.async {
           completion(false, nil)
         }
@@ -181,21 +181,94 @@ final class FirebaseService {
   }
 
 
-//    docRef.getDocument { (document, error) in
-//      if let document = document, document.exists {
-//        print("Try get demoModels 2")
-//        if let demoModels = document.data()?["demoModels"] as? [String: String] {
-//          print("Try get demoModels 3")
-//          completion(true, demoModels)
-//        } else {
-//          print("demoModels map does not exist in the document")
-//          completion(false, nil)
-//        }
-//      } else {
-//        print("Document does not exist or error occurred: \(error?.localizedDescription ?? "Unknown error")")
-//        completion(false, nil)
-//      }
-//    }
+  class func createPromptWithImage(db: Firestore?, type: String, image: UIImage, prompt: String, desc: String, completion: @escaping (Result<String, Error>) -> Void) {
+
+    // Convert UIImage to Data
+    guard let imageData = image.jpegData(compressionQuality: 0.9) else {
+      print("Failed to convert UIImage to Data")
+      return
+    }
+
+    // Create a unique filename for the image
+    let fileName = UUID().uuidString
+    let storageRef = Storage.storage().reference().child("promptImages/\(fileName).jpg")
+
+    // Upload image data to Firebase Storage
+    storageRef.putData(imageData, metadata: nil) { metadata, error in
+      if let error = error {
+        print("Failed to upload image to Firebase Storage: \(error.localizedDescription)")
+        completion(.failure(error))
+        return
+      }
+
+      // Get download URL of the image
+      storageRef.downloadURL { url, error in
+        if let error = error {
+          print("Failed to get download URL: \(error.localizedDescription)")
+          completion(.failure(error))
+          return
+        }
+
+        guard let downloadURL = url?.absoluteString else {
+          print("Download URL is nil")
+          return
+        }
+
+        print("Download URL: \(downloadURL)")
+
+        // Save the download URL to Firestore
+        let db = Firestore.firestore()
+        db.collection("prompts").document(type).collection("prompt").addDocument(data: [
+          "imageURL": downloadURL,
+          "prompt": prompt,
+          "desc": desc
+        ]) { error in
+          if let error = error {
+            print("Failed to save image URL to Firestore: \(error.localizedDescription)")
+            completion(.failure(error))
+          } else {
+            print("Successfully saved image URL to Firestore")
+            completion(.success(downloadURL))
+          }
+        }
+      }
+    }
+  }
+
+
+  class func downloadPromptData(db: Firestore?, type: String) async throws -> [CreatedPrompt]? {
+    guard let db = db else {print("G. get tut"); return nil }
+
+    // Reference to the collection
+    let collectionRef = db.collection("prompts").document(type).collection("prompt")
+
+    do {
+      // Fetch all documents in the collection
+      let snapshot = try await collectionRef.getDocuments()
+
+      // Array to store the decoded models
+      var allPrompts: [CreatedPrompt] = []
+
+      // Loop through each document in the collection
+      for document in snapshot.documents {
+        do {
+          // Decode the document data into the CreatedPrompts model
+          if let prompt = try document.data(as: CreatedPrompt?.self) {
+            allPrompts.append(prompt)
+          }
+        } catch {
+          print("Error decoding document \(document.documentID): \(error)")
+        }
+      }
+
+      return allPrompts // Return the array of decoded models
+
+    } catch {
+      print("Error fetching documents: \(error.localizedDescription)")
+      throw error
+    }
+  }
+
 
   /// GEt App config file
   /// - Parameter db: firebase db

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A955A0BE2C9CDA8400C91415 /* CreatedPromptsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A955A0BD2C9CDA8400C91415 /* CreatedPromptsView.swift */; };
+		A955A0C02C9CE66300C91415 /* SavedPromptDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A955A0BF2C9CE66300C91415 /* SavedPromptDetail.swift */; };
 		A9CD65B02C9ADB5D007F91D3 /* RepTrainerAdminApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CD65AF2C9ADB5D007F91D3 /* RepTrainerAdminApp.swift */; };
 		A9CD65B42C9ADB5E007F91D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9CD65B32C9ADB5E007F91D3 /* Assets.xcassets */; };
 		A9CD65B82C9ADB5E007F91D3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9CD65B72C9ADB5E007F91D3 /* Preview Assets.xcassets */; };
@@ -65,6 +67,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A955A0BD2C9CDA8400C91415 /* CreatedPromptsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatedPromptsView.swift; sourceTree = "<group>"; };
+		A955A0BF2C9CE66300C91415 /* SavedPromptDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPromptDetail.swift; sourceTree = "<group>"; };
 		A9CD65AC2C9ADB5D007F91D3 /* RepTrainerAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RepTrainerAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9CD65AF2C9ADB5D007F91D3 /* RepTrainerAdminApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepTrainerAdminApp.swift; sourceTree = "<group>"; };
 		A9CD65B32C9ADB5E007F91D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -221,6 +225,7 @@
 				A9CD65DB2C9ADBE8007F91D3 /* ZoomView.swift */,
 				A9D123D22C9B853B0047D307 /* TrainerTypePicker.swift */,
 				A9D123D42C9C48460047D307 /* RunDemoModel.swift */,
+				A955A0BF2C9CE66300C91415 /* SavedPromptDetail.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -235,6 +240,7 @@
 				A9CD65E02C9ADBE8007F91D3 /* SavedFixes.swift */,
 				A9CD65E12C9ADBE8007F91D3 /* SettingsView.swift */,
 				A9CD65E32C9ADBE8007F91D3 /* WelcomeView.swift */,
+				A955A0BD2C9CDA8400C91415 /* CreatedPromptsView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -352,6 +358,7 @@
 				A9CD65F52C9ADBE8007F91D3 /* Constants.swift in Sources */,
 				A9CD65FA2C9ADBE8007F91D3 /* BubbleView.swift in Sources */,
 				A9CD65F92C9ADBE8007F91D3 /* BottomNavigationView.swift in Sources */,
+				A955A0BE2C9CDA8400C91415 /* CreatedPromptsView.swift in Sources */,
 				A9CD65F42C9ADBE8007F91D3 /* AppConfig.swift in Sources */,
 				A9CD65EF2C9ADBE8007F91D3 /* FileOps.swift in Sources */,
 				A9CD66032C9ADBE8007F91D3 /* ProgressCircleView.swift in Sources */,
@@ -384,6 +391,7 @@
 				A9CD660C2C9ADBE8007F91D3 /* SavedFixes.swift in Sources */,
 				A9CD65EE2C9ADBE8007F91D3 /* Extensions.swift in Sources */,
 				A9CD66072C9ADBE8007F91D3 /* ZoomForScreenshots.swift in Sources */,
+				A955A0C02C9CE66300C91415 /* SavedPromptDetail.swift in Sources */,
 				A9D123D32C9B853B0047D307 /* TrainerTypePicker.swift in Sources */,
 				A9CD66042C9ADBE8007F91D3 /* PromptEditor.swift in Sources */,
 				A9CD65FB2C9ADBE8007F91D3 /* Components.swift in Sources */,

@@ -14,33 +14,15 @@ struct PromptEditor: View {
   @State private var selectedRange: NSRange = NSRange(location: 0, length: 0)  // Tracks cursor range
   @FocusState private var isTextFieldFocused: Bool  // Focus state for the text editor
   @State private var tempText = ""
-  @State private var demoModelDict: [String: String] = [:]
-  @State private var selectedModel: String = ""
-  @State private var isLoading = true
-
-  func loadDemoMOdels() {
-    observer.getDemoModels(type: observer.trainerType.rawValue, completion: { (success, demoModels) in
-      guard success, let demoModels = demoModels else {
-        demoModelDict = [:]
-        return
-      }
-      demoModelDict = demoModels.demoModels
-
-      self.isLoading = false
-      if let firstKey = demoModelDict.keys.first {
-        observer.selectedDemoModel = firstKey
-      }
-    })
-  }
 
   var body: some View {
     VStack {
       // Custom TextEditor with cursor management
       CustomTextView(text: $text, selectedRange: $selectedRange)
         .focused($isTextFieldFocused)
-        .frame(height:  UIScreen.main.bounds.size.height - 400)
-        .padding()
-      
+        .frame(height:  UIScreen.main.bounds.size.height - 500)
+        .padding(.horizontal, 20)
+
         HStack{
           Button(action: {
             insertTextAtCursor(" ###trigger### ")
@@ -57,43 +39,9 @@ struct PromptEditor: View {
           }
         }.padding(.horizontal, 20)
 
-        Spacer().frame(width: 10, height: 20)
+        Spacer().frame(width: 10, height: 40)
 
-      VStack{
-        HStack{
-          SmallButtonNoBackground(text: "Project Target", icon: "target")
-          Spacer()
-          TrainerTypePicker()
-        }.padding(.horizontal, 20)
 
-        HStack{
-          SmallButtonNoBackground(text: "Demo Model", icon: "rectangle.portrait.and.arrow.forward.fill")
-          Spacer()
-          Picker("Select a Model", selection: $observer.selectedDemoModel) {
-            // Loop through the demoModels and display each one as an option
-            if isLoading {
-              Text("Loading...").tag(nil as String?)
-            } else {
-              ForEach(demoModelDict.keys.sorted(), id: \.self) { key in
-                Text(key).tag(key)
-                  .font(Font.system(size: 14, weight: .regular))
-              }
-            }
-
-          }.disabled(isLoading)
-          .pickerStyle(MenuPickerStyle())  // Display as a dropdown menu
-          .tint(.basicText)
-          .onChange(of: observer.trainerType) { oldState, newState in
-            // Call action function
-            print("Trainer Tyoe is now \(observer.trainerType)")
-            isLoading = true
-            loadDemoMOdels()
-          }
-          .onAppear{
-            loadDemoMOdels()
-          }
-        }.padding(.horizontal, 20)
-      }.background(Color(UIColor.secondarySystemBackground))
     }
 
     .onAppear {
@@ -141,5 +89,5 @@ struct PromptEditor: View {
 
 
 #Preview {
-  PromptEditor(text: .constant("Thsi si sa test text ")).environmentObject(ObserverModel())
+  PromptEditor(text: .constant("A cascading waterfall over moss-covered rocks. The water flows smoothly and rapidly, creating a serene yet powerful scene. The background is a natural rocky terrain. The rocks are coated with vibrant green moss, contrasting with the grey and black tones of the wet rocks. The image is captured with a close-up angle, focusing on the details of the water splashing over the rocks. Lighting is natural, highlighting the texture of the moss and the movement of the water. The style is realistic and nature-focused, capturing the essence of a tranquil waterfall in the wilderness.")).environmentObject(ObserverModel())
 }

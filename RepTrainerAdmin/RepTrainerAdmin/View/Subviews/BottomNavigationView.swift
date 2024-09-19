@@ -71,7 +71,27 @@ struct BottomNavigation: View {
             }
             .accessibilityLabel(Text("keyMenuButtonChat"))
 
+          Spacer()
+          VStack{
+            Image(systemName: "photo.on.rectangle.angled")
+              .foregroundColor(Color.basicText)
+              .font(Font.system(size: iconSize, weight: .regular))
+              .frame(height: 25)
 
+            Text("All Prompts")
+              .foregroundStyle(Color.basicText)
+              .font(Font.system(size: fontSize, weight: .regular))
+
+            Rectangle()
+              .fill(observer.currentPath == .savedPrompts ? Color.basicPrimary : Color.clear)
+              .frame(width: rectSize, height: 3, alignment: .bottom)
+              .cornerRadius(15)
+
+          }.opacity(observer.currentPath == .savedPrompts ? 1 :  0.7)
+            .onTapGesture {
+              observer.currentPath = .savedPrompts
+            }
+            .accessibilityLabel(Text("keyMenuButtonChat"))
           Spacer()
 
           VStack{

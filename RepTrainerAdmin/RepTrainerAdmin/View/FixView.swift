@@ -184,75 +184,10 @@ struct FixViewProgressReady: View {
         Spacer().frame(width: 10, height: 30)
 
         BubblePromptView(image: Image(uiImage: observer.fixModel.originalImage))
-
-        RunDemoModel()
-
-        Spacer().frame(width: 10, height: 30)
+        Spacer().frame(width: 10, height: 20)
         PromptEditor(text:  $observer.fixModel.prompt)
         Spacer().frame(width: 10, height: 30)
-
-        Spacer().frame(width: 10, height: 30)
-        BubblePromptView(image: Image(uiImage: observer.fixModel.fixedimage ?? UIImage()))
-
-//        VStack{
-//          Text("Pompt")
-//            .font(.body.weight(.bold))
-//            .foregroundStyle(Color.basicText)
-//            .multilineTextAlignment(.leading)
-//            .fixedSize(horizontal: false, vertical: true)
-//            .padding(.horizontal, 20)
-//            .padding(.vertical, 10)
-//
-//          Text(observer.fixModel.prompt)
-//            .font(.body.weight(.regular))
-//            .foregroundStyle(Color.basicText)
-//            .multilineTextAlignment(/*@START_MENU_TOKEN@*/.leading/*@END_MENU_TOKEN@*/)
-//            .fixedSize(horizontal: false, vertical: true)
-//            .padding(.horizontal, 20)
-//
-//          if showCopiedText {
-//            Text("Copied")
-//              .font(.caption2)
-//              .padding(5)
-//              .background(Color.basicBackground)
-//              .opacity(showCopiedText ? 1 : 0)
-//          }
-//
-//          Spacer().frame(width: 10, height: 20)
-
-//          HStack{
-//
-//            NavigationLink(destination: PromptEditor( text: $observer.fixModel.prompt), label: {
-//              SmallButtonNoBackground(text: "Edit Prompt", icon: "pencil.and.list.clipboard")
-//                .scaleEffect(1.1)
-//            })
-//
-//            Spacer()
-//
-//            let prompt =  observer.fixModel.prompt
-//            ShareLink(item: prompt) {
-//              SmallButtonNoBackground(text: "Copy/Share", icon: "doc.on.doc")
-//                .scaleEffect(1.1)
-//            }
-//
-//          }.padding(.horizontal, 20)
-
-          Spacer().frame(width: 10, height: 50)
-
-//          Button(action:{
-//            observer.fixAction = .fixInProgress
-//            observer.startIDemomageGenration(prompt: observer.fixModel.prompt)
-//          }
-//          ) {
-//            SmallButton(text: "Retry (based on Prompt)", icon: "arrow.circlepath")
-//              .scaleEffect(1.3)
-//          }
-
-//          Spacer().frame(width: 10, height: 30)
-//
-//        }
-//        .background(Color(UIColor.secondarySystemBackground))
-//        .offset(x:0, y: -30)
+        RunDemoModel()
 
       }
       Spacer().frame(width: 10, height: 30)

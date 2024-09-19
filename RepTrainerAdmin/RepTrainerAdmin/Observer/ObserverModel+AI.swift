@@ -121,7 +121,6 @@ extension ObserverModel {
               if let url = URL(string: dataDecoded.response.first ?? "") {
                 if let image = try await FileOps.downloadImage(from: url) {
                   self.fixModel.fixedimage = image
-                  self.fixModel.prompt = prompt
                   self.persistSuccessRequest(urlString: self.fixModel.fixedUrl ?? "https://apple.com", image: image)
                   self.fixAction = .fixFinished
                   generateThumbnail(requestId: self.fixModel.requestId, fixUrlString: self.fixModel.fixedUrl, fixedImage: image)

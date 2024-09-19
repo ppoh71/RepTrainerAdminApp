@@ -17,6 +17,7 @@ enum NavigationItem {
   case welcome
   case home
   case fix
+  case savedPrompts
   case savedFixes
   case settings
   // Add more cases for different navigation paths as needed
@@ -36,7 +37,8 @@ class ObserverModel: ObservableObject {
 
   /// Replciate Trainer
   @Published var trainerType: TrainerType = .family
-  @Published var selectedDemoModel: String = ""
+  @Published var selectedDemoModel: SelectedDemoModel = SelectedDemoModel(desc: "", modelName: "")
+  @Published var createdPromptsList: [CreatedPrompt] = [CreatedPrompt]()
 
   /// Purchase
   @Published var showPaywall: Bool = false
@@ -74,6 +76,10 @@ class ObserverModel: ObservableObject {
       }
     }
   }
+
+  // Create Prompts
+
+
 }
 
 extension ObserverModel {
@@ -90,7 +96,7 @@ extension ObserverModel {
 
 
   func loadTransferable(from imageSelection: PhotosPickerItem) -> Progress {
-    
+
     DispatchQueue.main.async {
       self.loadingPhoto = true
     }
@@ -128,15 +134,11 @@ extension ObserverModel {
   }
 
   func setNewFixModelForNewImage(originalImage: UIImage) {
-
-    /// set fix model
     guard let userId = Utils.getUserId() else { return }
     let requestId = UUID().uuidString
-
     let newFixModel = FixModel(requestId: requestId, userId: userId, originalImage: originalImage, prompt: "")
     fixModel = newFixModel
   }
-
 
   func startNewRequest() {
     networkTaskGetImagePrompt?.cancel()
@@ -145,9 +147,8 @@ extension ObserverModel {
   }
 
   func startRequest() {
-
     guard !fixModel.requestId.isEmpty && !fixModel.userId.isEmpty else { return }
-    
+
     self.fixAction = .fixInProgress
     triggerHapticFeedback()
 
@@ -176,7 +177,7 @@ extension ObserverModel {
   ///   - requestId: the request id
   /// - Returns: replicate model
   func requestFixModel(image: UIImage, userId: String, requestId: String) -> RequestImagePromptModel? {
-    
+
     print("Start image encode 1")
     // handel image
     guard let resizedImage = FileOps.resizeImage(image: image, maxPixelSize: 1200) else {return nil}
@@ -198,6 +199,21 @@ extension ObserverModel {
     generator.impactOccurred()
   }
 
+  func getCreatedPrompts() {
+    Task {
+      do {
+        if let allPrompts = try await FirebaseService.downloadPromptData(db: self.db, type: self.trainerType.rawValue) {
+          createdPromptsList = allPrompts
+          print("Fetched all prompts: \(allPrompts)")
+        } else {
+          print("Fetched all prompts FAILED")
+        }
+
+      } catch {
+        print("Error: \(error)")
+      }
+    }
+  }
 }
 
 

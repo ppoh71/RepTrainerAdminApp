@@ -61,6 +61,8 @@ struct ContentView: View {
             HomeView()
           case .settings:
             SettingsView()
+          case .savedPrompts:
+            CreatedPromptsView()
           }
 
         }.onAppear {

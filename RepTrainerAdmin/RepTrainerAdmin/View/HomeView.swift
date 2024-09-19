@@ -28,7 +28,10 @@ struct HomeView: View {
 
       if observer.currentPath == .fix {
         FixView()
+      }
 
+      if observer.currentPath == .savedPrompts {
+        CreatedPromptsView()
       }
 
       if observer.currentPath == .savedFixes {
@@ -78,7 +81,6 @@ struct HomeContent: View {
     BubbleLoop(image: FixTypes.nine, layoutLeft: true, test: "Works with any kindo of photo"),
   ]
 
-
   var body: some View {
     ScrollViewReader { value in
       ScrollView(Axis.Set.vertical, showsIndicators: false) {
@@ -93,8 +95,6 @@ struct HomeContent: View {
               .foregroundColor(.basicText)
               .font(.footnote.weight(.bold))
               .multilineTextAlignment(.leading)
-
-            RunDemoModel()
 
             Text("Clone any Photo or Image with AI.")
               .foregroundColor(.basicText)
