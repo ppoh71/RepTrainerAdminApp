@@ -19,7 +19,6 @@ struct ContentView: View {
 
     FileOps.createDirectoriesCheck()
     
-    
     /// DEBUG ONLY
     /// delete from keychain
     /// KeychainHandler.service.delete(service: UserDefaultsKeys.kcServiceName, account: UserDefaultsKeys.kcAccountName)
@@ -62,7 +61,9 @@ struct ContentView: View {
           case .settings:
             SettingsView()
           case .savedPrompts:
-            CreatedPromptsView()
+            SavedPromptsView()
+          case .createTraining:
+            CreateTrainging()
           }
 
         }.onAppear {

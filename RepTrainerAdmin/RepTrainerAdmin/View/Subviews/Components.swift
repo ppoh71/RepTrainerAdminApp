@@ -82,6 +82,10 @@ enum ButtonType {
   case cancel
   case goHistory
   case download
+  case createTraining
+  case selectImages
+  case next
+  case savePrompt
 }
 
 struct ButtonDefaultShape: View {
@@ -93,7 +97,7 @@ struct ButtonDefaultShape: View {
     case .addPhotos:
       return ("plus", "Upload your photo")
     case .fixUpscxape:
-      return ("arrow.circlepath", "Start Cloning")
+      return ("text.bubble", "Get Prompt")
     case .redo:
       return ("arrow.triangle.2.circlepath", "Try Again")
     case .newFix:
@@ -104,6 +108,14 @@ struct ButtonDefaultShape: View {
       return ("square.stack.3d.down.right", "Got to History")
     case .download:
       return ("arrow.down.square", "Download")
+    case .createTraining:
+      return ("ant", "Create New Training")
+    case .selectImages:
+      return ("photo.on.rectangle.angled", "Select Images")
+    case .next:
+      return ("arrow.right", "Next")
+    case .savePrompt:
+      return ("arrow.down.square", "Save Prompt")
     }
   }
 

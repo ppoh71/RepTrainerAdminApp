@@ -84,33 +84,6 @@ struct ZoomViewForScreenshots: View {
         .scaleEffect(currentZoom + totalZoom)
         .offset(offset)
 
-        .gesture(
-          MagnifyGesture()
-            .onChanged { value in
-              print("current zoom \(currentZoom)")
-              currentZoom = value.magnification - 1
-            }
-            .onEnded { value in
-              print("totalZoom \(totalZoom)")
-              totalZoom += currentZoom
-              currentZoom = 0
-            }
-
-            .simultaneously(
-              with: DragGesture(minimumDistance: 0)
-                .onChanged({ value in
-                  withAnimation(.interactiveSpring()) {
-                    offset = handleOffsetChange(value.translation)
-                  }
-                })
-                .onEnded({ _ in
-                  lastOffset = offset
-                })
-            )
-        )
-
-
-
     }//.navigationBarTitle(backText, displayMode: .inline)
     .navigationBarTitleDisplayMode(.inline)
     .toolbar {

@@ -108,9 +108,12 @@ struct FixModel{
   var requestId: String
   var userId: String
   var originalImage: UIImage
+  var baseImage: UIImage?
+  var baseImageUrl: String?
   var fixedimage: UIImage?
   var fixedUrl: String?
   var prompt: String
+  
 
   func getFinalPrompt( withTrigger trigger: String, andAddition addition: String) -> String {
     let replacedText = self.prompt

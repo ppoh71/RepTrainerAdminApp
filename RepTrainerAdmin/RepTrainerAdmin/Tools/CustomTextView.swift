@@ -42,7 +42,7 @@ struct CustomTextView: UIViewRepresentable {
   func makeUIView(context: Context) -> UITextView {
     let textView = UITextView()
     textView.delegate = context.coordinator
-    textView.font = UIFont.preferredFont(forTextStyle: .title3)
+    textView.font = UIFont.preferredFont(forTextStyle: .title2)
     textView.isSelectable = true
     textView.isEditable = true
     return textView

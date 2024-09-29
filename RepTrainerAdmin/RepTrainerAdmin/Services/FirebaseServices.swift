@@ -147,6 +147,7 @@ final class FirebaseService {
 
   class func fetchDemoModelToRun(db: Firestore?, model: String, completion: @escaping (Bool, DemoModelToRun?) -> Void) {
     guard let db = db else {print("G. get tut"); return}
+    guard !model.isEmpty else {print("G. model is empty"); return}
 
     print("model to find: \(model)")
     let docRef = db.collection("finishedTrainings").document(model)
@@ -180,9 +181,9 @@ final class FirebaseService {
     }
   }
 
-
-  class func createPromptWithImage(db: Firestore?, type: String, image: UIImage, prompt: String, desc: String, completion: @escaping (Result<String, Error>) -> Void) {
-
+  class func createPromptWithImage(db: Firestore?, type: String, image: UIImage, prompt: String, desc: String, options: [String], sortOrder: Int, completion: @escaping (Result<String, Error>) -> Void) {
+    guard let db = db else {print("G. get tut"); return }
+    
     // Convert UIImage to Data
     guard let imageData = image.jpegData(compressionQuality: 0.9) else {
       print("Failed to convert UIImage to Data")
@@ -217,11 +218,12 @@ final class FirebaseService {
         print("Download URL: \(downloadURL)")
 
         // Save the download URL to Firestore
-        let db = Firestore.firestore()
         db.collection("prompts").document(type).collection("prompt").addDocument(data: [
           "imageURL": downloadURL,
           "prompt": prompt,
-          "desc": desc
+          "desc": desc,
+          "options": options,
+          "sortOrder": sortOrder
         ]) { error in
           if let error = error {
             print("Failed to save image URL to Firestore: \(error.localizedDescription)")
@@ -235,9 +237,44 @@ final class FirebaseService {
     }
   }
 
+  class func updateSortOrderForPrompt(db: Firestore?, documentID: String, type: String, newOrder: Int) {
+    guard let db = db else {print("G. get tut"); return }
 
-  class func downloadPromptData(db: Firestore?, type: String) async throws -> [CreatedPrompt]? {
-    guard let db = db else {print("G. get tut"); return nil }
+    db.collection("prompts").document(type).collection("prompt").document(documentID).updateData(["sortOrder": newOrder]) { error in
+      if let error = error {
+        print("Error updating sort order: \(error)")
+      } else {
+        print("Sort order updated successfully")
+      }
+    }
+  }
+
+  class func deletePrompt(db: Firestore?, type: String, documentID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    guard let db = db else {print("G. get tut"); return }
+
+    print("delete 1")
+    print(type)
+    print(documentID)
+    // Reference to the document to delete
+    let docRef = db.collection("prompts").document(type).collection("prompt").document(documentID)
+    print("delete 2")
+    
+    // Perform the deletion
+    docRef.delete { error in
+      print("delete 3")
+      if let error = error {
+        print("Failed to delete document: \(error.localizedDescription)")
+        completion(.failure(error))
+      } else {
+        print("Successfully deleted document with ID: \(documentID)")
+        completion(.success(()))
+      }
+    }
+  }
+
+
+  class func downloadPromptData(db: Firestore?, type: String) async throws -> [String: CreatedPrompt]? {
+    guard let db = db else { print("G. get tut"); return nil }
 
     // Reference to the collection
     let collectionRef = db.collection("prompts").document(type).collection("prompt")
@@ -246,22 +283,29 @@ final class FirebaseService {
       // Fetch all documents in the collection
       let snapshot = try await collectionRef.getDocuments()
 
-      // Array to store the decoded models
-      var allPrompts: [CreatedPrompt] = []
+      // Dictionary to store document IDs and their corresponding CreatedPrompt models
+      var allPrompts: [String: CreatedPrompt] = [:]
 
       // Loop through each document in the collection
       for document in snapshot.documents {
         do {
-          // Decode the document data into the CreatedPrompts model
+          // Decode the document data into the CreatedPrompt model
           if let prompt = try document.data(as: CreatedPrompt?.self) {
-            allPrompts.append(prompt)
+            // Store the document ID as the key and the CreatedPrompt as the value
+            allPrompts[document.documentID] = prompt
           }
         } catch {
           print("Error decoding document \(document.documentID): \(error)")
         }
       }
 
-      return allPrompts // Return the array of decoded models
+      // Convert dictionary to an array of tuples [(String, CreatedPrompt)]
+      var sortedArray = allPrompts.sorted { $0.value.sortOrder < $1.value.sortOrder }
+
+      // Optionally, convert back to dictionary if you need it in dictionary format
+      let sortedPrompts = Dictionary(uniqueKeysWithValues: sortedArray)
+
+      return sortedPrompts // Return the sorted dictionary
 
     } catch {
       print("Error fetching documents: \(error.localizedDescription)")
@@ -310,6 +354,40 @@ final class FirebaseService {
     }
   }
 
+
+  class func uploadZipAndStartTraining(userId: String, zipFileURL: URL, completion: @escaping (Result<URL, Error>) -> Void) {
+    // Create a reference to Firebase Storage
+    let storageRef = Storage.storage().reference().child("training_images/\(userId)/data.zip")
+
+    // Upload the file
+    let uploadTask = storageRef.putFile(from: zipFileURL, metadata: nil) { metadata, error in
+      if let error = error {
+        print("Error uploading file: \(error.localizedDescription)")
+        completion(.failure(error))
+        return
+      }
+
+      // Get the download URL
+      storageRef.downloadURL { url, error in
+        if let error = error {
+          print("Error getting download URL: \(error.localizedDescription)")
+          completion(.failure(error))
+          return
+        }
+
+        if let downloadURL = url {
+          print("File uploaded successfully. Download URL: \(downloadURL)")
+          completion(.success(downloadURL))
+        }
+      }
+    }
+
+    // Monitor the upload progress (optional)
+    uploadTask.observe(.progress) { snapshot in
+      let percentComplete = Double(snapshot.progress!.completedUnitCount) / Double(snapshot.progress!.totalUnitCount) * 100
+      print("Upload is \(percentComplete)% complete")
+    }
+  }
 
 
 }

@@ -31,11 +31,15 @@ struct HomeView: View {
       }
 
       if observer.currentPath == .savedPrompts {
-        CreatedPromptsView()
+        SavedPromptsView()
       }
 
       if observer.currentPath == .savedFixes {
         SavedFixes()
+      }
+
+      if observer.currentPath == .createTraining {
+        CreateTrainging()
       }
 
       if observer.currentPath == .settings {
@@ -54,11 +58,8 @@ struct HomeView: View {
           }
       }
     }
-
-
-
     .ignoresSafeArea(edges: .bottom)
-    .navigationBarTitle("keyTranslateAndChat", displayMode: .large)
+    .navigationBarTitle("", displayMode: .large)
      
   }
 }
@@ -87,50 +88,32 @@ struct HomeContent: View {
 
         HStack{
           VStack(alignment: .leading){
-
-
+            
             Spacer().frame(width: 10, height: 120)
 
-            Text("Flux Photo Clone")
+            Text("ReTrainer Admin")
               .foregroundColor(.basicText)
               .font(.footnote.weight(.bold))
               .multilineTextAlignment(.leading)
 
-            Text("Clone any Photo or Image with AI.")
+            Spacer().frame(width: 10, height: 60)
+            
+            Text("Working in:")
               .foregroundColor(.basicText)
               .font(.title.weight(.bold))
               .multilineTextAlignment(.leading)
 
-            Spacer().frame(width: 10, height: 30)
+            TrainerTypePicker()
 
-            HStack{
-              Image(systemName: "1.circle")
-                .foregroundColor(.basicText)
-                .font(Font.system(size: 23, weight: .bold))
+            Spacer().frame(width: 10, height: 60)
 
-              Text("Upload any image")
-                .foregroundColor(.basicText)
-                .font(.title2.weight(.bold))
-                .multilineTextAlignment(.leading)
-            }
+            Text("Create Prompts.")
+              .foregroundColor(.basicText)
+              .font(.title.weight(.bold))
+              .multilineTextAlignment(.leading)
 
-            Spacer().frame(width: 10, height: 10)
-
-            HStack{
-              Image(systemName: "2.circle")
-                .foregroundColor(.basicText)
-                .font(Font.system(size: 23, weight: .bold))
-
-              Text("Get your own clone")
-                .foregroundColor(.basicText)
-                .font(.title2.weight(.bold))
-                .multilineTextAlignment(.leading)
-            }
           } .frame(width: 280)
         }
-
-          Spacer().frame(height: 30)
-
           PhotosPicker(selection: $observer.imageSelection,
                        matching: .images,
                        photoLibrary: .shared()) {
@@ -138,13 +121,32 @@ struct HomeContent: View {
 
           }
 
-        Spacer().frame(height: 120)
+        Spacer().frame(height: 60)
+
+        HStack{
+          VStack(alignment: .leading) {
+
+            Text("Create Training.")
+              .foregroundColor(.basicText)
+              .font(.title.weight(.bold))
+              .multilineTextAlignment(.leading)
+
+
+          Button(action: {
+            observer.initNewTraining()
+            self.observer.currentPath = .createTraining
+          }) {
+            ButtonDefaultShape(buttonType: .createTraining)
+          }
+
+          } .frame(width: 280)
+        }
+
+        Spacer().frame(height: 60)
 
         ForEach(bubleLoop, id:\.self) { item in
           BubbleView(cloneImage: item.image.getFixItemImages().0 , originalImage: item.image.getFixItemImages().1, leftLayout: item.layoutLeft, textStatic: item.test)
           Spacer().frame(width: 10, height: 20)
-
-
         }
 
 

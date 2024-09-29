@@ -42,6 +42,7 @@ struct UserDefaultsKeys {
   static let kcAccountName = "TCCopyImageAppIDAccountNameToken"
   static let freeFixesKey = "FreeCopiesToGenerateKey"
   static let openedApp = "hasOpenedTheApp"
+  static let trainerTypeKey = "TrainerTypeKey"
 }
 
 class Utils{
@@ -92,13 +93,20 @@ class Utils{
       print("Auth: 2. Try To Login")
       /// try to login again
       if let appID = Utils.getAppUUID() {
+        print("appID \(appID)")
+
         FirebaseService.signinUser(email: "\(appID)@arrea.io", password: appID, completion: { success in
           // re register if login fails
           if !success {
-
+            print("not logged try to register")
             Utils.registerUser()
+          } else {
+
+            print("success looged in")
           }
         })
+      } else {
+        print("No app id")
       }
       return nil
     }
@@ -121,6 +129,20 @@ class Utils{
   class func getHasSubscription() -> Bool {
     print("HAS SUBSCRIPTION \(UserDefaults.standard.bool(forKey: UserDefaultsKeys.hasProSubscription))")
     return  UserDefaults.standard.bool(forKey: UserDefaultsKeys.hasProSubscription)
+  }
+
+
+  // Store the selected TrainerType in UserDefaults
+  class func setTrainerType(_ trainerType: TrainerType) {
+    UserDefaults.standard.set(trainerType.rawValue, forKey: UserDefaultsKeys.trainerTypeKey)
+  }
+
+  // Retrieve the TrainerType from UserDefaults
+  class func getTrainerType() -> TrainerType? {
+    if let storedValue = UserDefaults.standard.string(forKey: UserDefaultsKeys.trainerTypeKey) {
+      return TrainerType(rawValue: storedValue)
+    }
+    return nil
   }
 
   class func incrementFreeFixes() {

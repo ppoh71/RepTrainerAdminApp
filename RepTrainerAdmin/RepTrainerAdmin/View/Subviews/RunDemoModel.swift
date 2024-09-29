@@ -12,119 +12,177 @@ struct RunDemoModel: View {
   @State private var demoModelDict: [String: String] = [:]
   @State private var selectedModel: String = ""
   @State private var isLoading = true
+  @State private var isProccessPrediction = false
+  @State private var selectedOptions: [String] = []
 
-  func loadDemoMOdels() {
+  func loadDemoModels() {
     observer.getDemoModels(type: observer.trainerType.rawValue, completion: { (success, demoModels) in
       guard success, let demoModels = demoModels else {
         demoModelDict = [:]
         return
       }
-      demoModelDict = demoModels.demoModels
+
+      observer.selectedDemoModelList = [SelectedDemoModel]()
+
+      for model in demoModels.demoModels {
+        let newItem = SelectedDemoModel(desc: model.key, modelName: model.value)
+        observer.selectedDemoModelList.append(newItem)
+      }
+
+      /// set first as default always
+      if let first = observer.selectedDemoModelList.first {
+        observer.selectedDemoModel = first
+      }
 
       self.isLoading = false
-      if let first = demoModelDict.first {
-        observer.selectedDemoModel = SelectedDemoModel(desc: first.key, modelName: first.value)
-      }
     })
   }
 
   func getDemoModelToRun() {
     print("demo run start")
-    //observer.getDemoModelToRun(model: "cron_training_test-9", completion: { (success, demoModelToRun) in
+    isProccessPrediction = true
+    observer.isLoading = true
     observer.getDemoModelToRun(model: observer.selectedDemoModel.modelName, completion: { (success, demoModelToRun) in
       guard success, let demoModelToRun = demoModelToRun else {
         print("Get demoModelToRun failded")
         return
       }
-       print("Gort demo Model:")
-       print(demoModelToRun)
+      print("Gort demo Model:")
+      print(demoModelToRun)
 
-     /// we havew to update the current prompt with the demo model values: trigger and prompt addition
       let finalPrompt = observer.fixModel.getFinalPrompt(withTrigger: demoModelToRun.trigger, andAddition: demoModelToRun.promptAddition)
 
-      /// run the model
-      observer.startIDemomageGenration(model: observer.selectedDemoModel.modelName, prompt: finalPrompt)
+      guard  let baseImage = observer.fixModel.baseImage else { print("No base image"); return}
+      observer.startIDemoImageGeneration(model: observer.selectedDemoModel.modelName, prompt: finalPrompt, image: baseImage)
     })
   }
 
   func savePrompt() {
-    if let image = observer.fixModel.fixedimage {
-
-      FirebaseService.createPromptWithImage(db: observer.db, type: observer.trainerType.rawValue, image: image, prompt: observer.fixModel.prompt, desc: "Some Description" ) { result in
+    if let image = observer.fixModel.baseImage {
+      FirebaseService.createPromptWithImage(db: observer.db, type: observer.trainerType.rawValue, image: image, prompt: observer.fixModel.prompt, desc: "Some Description", options: selectedOptions, sortOrder: 1 ) { result in
         switch result {
-        case .success(let url):
+        case .success(_):
           print("Success Prompt saved")
-        case .failure(let error):
+        case .failure(_):
           print("Failure Creating Prompt")
         }
       }
     }
   }
-    var body: some View {
+
+  func toggleOption(_ option: PromptOptions) {
+    if let index = selectedOptions.firstIndex(of: option.rawValue) {
+      selectedOptions.remove(at: index)  // Remove if already selected
+    } else {
+      selectedOptions.append(option.rawValue)  // Add if not selected
+    }
+  }
+
+  func isSelected(_ option: PromptOptions) -> Bool {
+    selectedOptions.contains(option.rawValue)
+  }
+
+  var body: some View {
+    VStack{
+
       VStack{
 
-        VStack{
-          HStack{
-            SmallButtonNoBackground(text: "Project Target", icon: "target")
-            Spacer()
-            TrainerTypePicker()
-          }.padding(.horizontal, 20)
+        HStack{
+          SmallButtonNoBackground(text: "Project Target", icon: "target")
+          Spacer()
+          TrainerTypePicker()
+        }.padding(.horizontal, 20)
 
-          HStack{
-            SmallButtonNoBackground(text: "Demo Model", icon: "rectangle.portrait.and.arrow.forward.fill")
-            Spacer()
-            Picker("Select a Model", selection: $observer.selectedDemoModel.desc) {
-              // Loop through the demoModels and display each one as an option
-              if isLoading {
-                Text("Loading...").tag(nil as String?)
-              } else {
-                ForEach(demoModelDict.keys.sorted(), id: \.self) { key in
-                  Text(key).tag(key)
-                    .font(Font.system(size: 14, weight: .regular))
-                }
-              }
+        HStack{
+          SmallButtonNoBackground(text: "Demo Model", icon: "rectangle.portrait.and.arrow.forward.fill")
+          Spacer()
 
-            }.disabled(isLoading)
-              .pickerStyle(MenuPickerStyle())  // Display as a dropdown menu
-              .tint(.basicText)
-              .onChange(of: observer.trainerType) { oldState, newState in
-                // Call action function
-                print("Trainer Tyoe is now \(observer.trainerType)")
-                isLoading = true
-                loadDemoMOdels()
+          Picker("Select a Model", selection: $observer.selectedDemoModel) {
+            if isLoading {
+              Text("Loading...").tag(nil as String?)
+            } else {
+              ForEach(observer.selectedDemoModelList, id: \.self) { model in
+                Text(model.desc).tag(model.modelName)
+                  .font(Font.system(size: 14, weight: .regular))
               }
-              .onAppear{
-                loadDemoMOdels()
-              }
-          }.padding(.horizontal, 20)
-        }.background(Color(UIColor.secondarySystemBackground))
-        
-        Spacer().frame(width: 10, height: 20)
+            }
 
+          }.disabled(isLoading)
+            .pickerStyle(MenuPickerStyle())  // Display as a dropdown menu
+            .tint(.basicText)
+            .onChange(of: observer.trainerType) { oldState, newState in
+              // Call action function
+              print("Trainer Tyoe is now \(observer.trainerType)")
+              isLoading = true
+              loadDemoModels()
+            }
+            .onAppear{
+              loadDemoModels()
+            }
+        }.padding(.horizontal, 20)
+      }.background(Color(UIColor.secondarySystemBackground))
+
+      Spacer().frame(width: 10, height: 40)
+
+      HStack{
         Button(action: {
           getDemoModelToRun()
         }) {
-          SmallButtonNoBackground(text: "Run Demo Model Now", icon: "play")
+          SmallButtonNoBackground(text: "Run Demo Model Now (\(observer.selectedDemoModel.desc))", icon: "play")
         }
+        if observer.isLoading {
+          ProgressView()
+        }
+      }
 
-        Spacer().frame(width: 10, height: 30)
-        BubblePromptView(image: Image(uiImage: observer.fixModel.fixedimage ?? UIImage()))
-        Spacer().frame(width: 10, height: 50)
+      Spacer().frame(width: 10, height: 30)
+      BubblePromptView(image: Image(uiImage: observer.fixModel.fixedimage ?? UIImage()))
+      Spacer().frame(width: 10, height: 50)
 
-        /// get the model infos to run
-        if observer.fixModel.fixedimage?.size.width ?? UIImage().size.width > 0 {
-          Button(action: {
-            savePrompt()
-          }) {
-            SmallButtonNoBackground(text: "Save Prompt", icon: "play")
+      // MARK: Save
+
+      VStack{
+        Spacer().frame(width: 10, height: 10)
+        Text("Save Prompt for type: \(observer.trainerType.rawValue)")
+          .multilineTextAlignment(.leading)
+          .fixedSize(horizontal: false, vertical: true)
+          .font(.body.bold())
+          .foregroundColor(Color.basicText)
+        Spacer().frame(width: 10, height: 20)
+        ScrollView(.horizontal, showsIndicators: false) {
+          HStack {
+            Spacer().frame(width: 10, height: 20)
+            ForEach(PromptOptions.allCases) { option in
+              Button(action: {
+                toggleOption(option)
+              }) {
+                Text(option.rawValue.capitalized)
+                  .font(.system(size: 14))
+                  .padding(10)
+                  .background(isSelected(option) ? Color.basicPrimary : Color.basicBackground)
+                  .foregroundColor(.basicText)
+                  .cornerRadius(8)
+              }
+            }
+            Spacer().frame(width: 10, height: 20)
           }
         }
+        Spacer().frame(width: 10, height: 20)
+        Button(action: {
+          savePrompt()
+        }) {
+          ButtonDefaultShape(buttonType: .savePrompt)
+        }
+        Spacer().frame(width: 10, height: 30)
+      }.background(Color(UIColor.secondarySystemBackground))
 
-
-      }
     }
+  }
 }
 
+
 #Preview {
-    RunDemoModel().environmentObject(ObserverModel())
+  //PromptOptionsView()
+  RunDemoModel().environmentObject(ObserverModel())
+  //DemoModelPickerView()
 }

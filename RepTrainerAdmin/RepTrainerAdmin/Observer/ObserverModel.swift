@@ -18,6 +18,7 @@ enum NavigationItem {
   case home
   case fix
   case savedPrompts
+  case createTraining
   case savedFixes
   case settings
   // Add more cases for different navigation paths as needed
@@ -37,8 +38,9 @@ class ObserverModel: ObservableObject {
 
   /// Replciate Trainer
   @Published var trainerType: TrainerType = .family
-  @Published var selectedDemoModel: SelectedDemoModel = SelectedDemoModel(desc: "", modelName: "")
-  @Published var createdPromptsList: [CreatedPrompt] = [CreatedPrompt]()
+  @Published var selectedDemoModelList: [SelectedDemoModel] = [SelectedDemoModel]()
+  @Published var selectedDemoModel: SelectedDemoModel = SelectedDemoModel(id: UUID(), desc: "", modelName: "")
+  @Published var createdPromptsList: [String: CreatedPrompt] = [:]
 
   /// Purchase
   @Published var showPaywall: Bool = false
@@ -64,6 +66,7 @@ class ObserverModel: ObservableObject {
   @Published var fixAction: FixAction = .none
   @Published var fixModel = FixModel(requestId: "", userId: "", originalImage: UIImage(named: "flamingo") ?? UIImage(), fixedimage: UIImage(), fixedUrl: "https://replicate.delivery/pbxt/pdV2WXZDuyKLNJsiVOWSheoflAgoFRYbfuvlLK1UnbHQWImlA/1337-d2ba1eb4-0f13-11ef-ac52-36bd68c515e6.png", prompt: "")
   @Published private(set) var imageState: ImageState = .empty
+  
   @Published var imageSelection: PhotosPickerItem? = nil {
     didSet {
       print("did set image selection")
@@ -77,9 +80,11 @@ class ObserverModel: ObservableObject {
     }
   }
 
-  // Create Prompts
+  @Published var isLoading: Bool = false
 
-
+  // Create Trainint
+  @Published var newTrainging: NewTrainingModel = NewTrainingModel()
+  @Published var newTraingingSelctedImages: [UIImage] = []
 }
 
 extension ObserverModel {
@@ -103,9 +108,6 @@ extension ObserverModel {
 
     return imageSelection.loadTransferable(type: PickerImage.self) { result in
 
-
-      print("load tranferable finish")
-
       DispatchQueue.main.async {
         self.loadingPhoto = false
 
@@ -113,6 +115,7 @@ extension ObserverModel {
           print("Failed to get the selected item.")
           return
         }
+
         switch result {
         case .success(let pickerImage?):
           self.fixAction = .imageSelected
@@ -171,26 +174,16 @@ extension ObserverModel {
   }
 
   /// Create replicate request, resize the original image, get image datd and write uriExcnode for the request
-  /// - Parameters:
-  ///   - image: uiimage
-  ///   - userId: the userid
-  ///   - requestId: the request id
-  /// - Returns: replicate model
-  func requestFixModel(image: UIImage, userId: String, requestId: String) -> RequestImagePromptModel? {
+  func requestResponseModel(image: UIImage, model: String, prompt: String) -> RequestReplicateImagetModel? {
 
-    print("Start image encode 1")
     // handel image
     guard let resizedImage = FileOps.resizeImage(image: image, maxPixelSize: 1200) else {return nil}
-    print("Start image encode 2")
     guard let jpegData = resizedImage.jpegData(compressionQuality: 1.0) else {return nil}
     let mimeType = "image/jpeg"
-    print("Start image encode 3")
     let imageString = jpegData.uriEncoded(mimeType: mimeType)
-    print("Start image encode 4")
-    /// create model
-    let newReplicate = RequestImagePromptModel(userId: userId, requestId: requestId, image: imageString, prompt: self.textPrompt)
-    print("Start image encode 5")
-    return newReplicate
+
+    let newRequest = RequestReplicateImagetModel(model: model, image: imageString, prompt: prompt)
+    return newRequest
   }
 
   func triggerHapticFeedback() {
@@ -214,6 +207,9 @@ extension ObserverModel {
       }
     }
   }
+
+  
+
 }
 
 

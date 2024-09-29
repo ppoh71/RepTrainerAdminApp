@@ -8,6 +8,8 @@
 import Foundation
 import AVFoundation
 import UIKit
+import Compression
+import ZIPFoundation 
 
 enum ImageType {
   case jpg
@@ -307,4 +309,42 @@ class FileOps{
       //throw NSError(domain: "Data could not be converted to UIImage", code: 1, userInfo: nil)
     }
   }
+
+  class func createZipFromImages(images: [UIImage], zipFileName: String) throws -> URL? {
+    // Get the URL of the temporary directory
+    let fileManager = FileManager.default
+    let tempDirectoryURL = fileManager.temporaryDirectory
+
+    // Create a unique folder in the temp directory to hold the images
+    let folderURL = tempDirectoryURL.appendingPathComponent(UUID().uuidString, isDirectory: true)
+    try fileManager.createDirectory(at: folderURL, withIntermediateDirectories: true, attributes: nil)
+
+    // Save each image as a JPEG file in the folder
+    for (index, image) in images.enumerated() {
+      let imageData = image.jpegData(compressionQuality: 0.8) // Convert image to Data
+      let imageFileName = "image_\(index + 1).jpg" // Create a unique file name for each image
+      let fileURL = folderURL.appendingPathComponent(imageFileName)
+      try imageData?.write(to: fileURL) // Save image to the folder
+    }
+
+    // Create a ZIP file URL in the temporary directory
+    let zipFileURL = tempDirectoryURL.appendingPathComponent("\(zipFileName).zip")
+
+    // Check if the ZIP file already exists and delete it if it does
+    if fileManager.fileExists(atPath: zipFileURL.path) {
+      try fileManager.removeItem(at: zipFileURL) // Remove existing ZIP file
+    }
+
+    // Zip the folder containing the images
+    try fileManager.zipItem(at: folderURL, to: zipFileURL)
+
+    // Optionally, delete the temporary folder containing the images
+    try fileManager.removeItem(at: folderURL)
+
+    print("ZIP file created: \(zipFileURL.path)")
+
+    return zipFileURL // Return the URL of the created ZIP file
+  }
+
+
 }

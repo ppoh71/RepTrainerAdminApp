@@ -7,8 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A955A0BE2C9CDA8400C91415 /* CreatedPromptsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A955A0BD2C9CDA8400C91415 /* CreatedPromptsView.swift */; };
+		A955A0BE2C9CDA8400C91415 /* SavedPrompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A955A0BD2C9CDA8400C91415 /* SavedPrompts.swift */; };
 		A955A0C02C9CE66300C91415 /* SavedPromptDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A955A0BF2C9CE66300C91415 /* SavedPromptDetail.swift */; };
+		A955A0C22C9E198D00C91415 /* CreateTrainging.swift in Sources */ = {isa = PBXBuildFile; fileRef = A955A0C12C9E198D00C91415 /* CreateTrainging.swift */; };
+		A955A0C52C9E235700C91415 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = A955A0C42C9E235700C91415 /* ZIPFoundation */; };
+		A955A0C72C9E242E00C91415 /* ObserverModel+CreateTraining.swift in Sources */ = {isa = PBXBuildFile; fileRef = A955A0C62C9E242E00C91415 /* ObserverModel+CreateTraining.swift */; };
+		A955A0C92C9E267600C91415 /* SelectFamilyMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = A955A0C82C9E267600C91415 /* SelectFamilyMember.swift */; };
+		A9747CEC2CA20F6E004C9A61 /* TrainingInProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9747CEB2CA20F6E004C9A61 /* TrainingInProgress.swift */; };
 		A9CD65B02C9ADB5D007F91D3 /* RepTrainerAdminApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CD65AF2C9ADB5D007F91D3 /* RepTrainerAdminApp.swift */; };
 		A9CD65B42C9ADB5E007F91D3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9CD65B32C9ADB5E007F91D3 /* Assets.xcassets */; };
 		A9CD65B82C9ADB5E007F91D3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A9CD65B72C9ADB5E007F91D3 /* Preview Assets.xcassets */; };
@@ -67,8 +72,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A955A0BD2C9CDA8400C91415 /* CreatedPromptsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatedPromptsView.swift; sourceTree = "<group>"; };
+		A955A0BD2C9CDA8400C91415 /* SavedPrompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPrompts.swift; sourceTree = "<group>"; };
 		A955A0BF2C9CE66300C91415 /* SavedPromptDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPromptDetail.swift; sourceTree = "<group>"; };
+		A955A0C12C9E198D00C91415 /* CreateTrainging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTrainging.swift; sourceTree = "<group>"; };
+		A955A0C62C9E242E00C91415 /* ObserverModel+CreateTraining.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ObserverModel+CreateTraining.swift"; sourceTree = "<group>"; };
+		A955A0C82C9E267600C91415 /* SelectFamilyMember.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectFamilyMember.swift; sourceTree = "<group>"; };
+		A9747CEB2CA20F6E004C9A61 /* TrainingInProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingInProgress.swift; sourceTree = "<group>"; };
 		A9CD65AC2C9ADB5D007F91D3 /* RepTrainerAdmin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RepTrainerAdmin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9CD65AF2C9ADB5D007F91D3 /* RepTrainerAdminApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepTrainerAdminApp.swift; sourceTree = "<group>"; };
 		A9CD65B32C9ADB5E007F91D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -132,6 +141,7 @@
 				A9CD661C2C9ADD8C007F91D3 /* FirebaseAuth in Frameworks */,
 				A9CD66222C9ADD8C007F91D3 /* FirebaseFirestoreCombine-Community in Frameworks */,
 				A9CD66202C9ADD8C007F91D3 /* FirebaseFirestore in Frameworks */,
+				A955A0C52C9E235700C91415 /* ZIPFoundation in Frameworks */,
 				A9CD66182C9ADD8C007F91D3 /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -210,6 +220,12 @@
 		A9CD65DC2C9ADBE8007F91D3 /* Subviews */ = {
 			isa = PBXGroup;
 			children = (
+				A9CD65D72C9ADBE8007F91D3 /* PromptEditor.swift */,
+				A9D123D42C9C48460047D307 /* RunDemoModel.swift */,
+				A955A0C82C9E267600C91415 /* SelectFamilyMember.swift */,
+				A9747CEB2CA20F6E004C9A61 /* TrainingInProgress.swift */,
+				A9D123D22C9B853B0047D307 /* TrainerTypePicker.swift */,
+				A955A0BF2C9CE66300C91415 /* SavedPromptDetail.swift */,
 				A9CD65CC2C9ADBE8007F91D3 /* BottomNavigationView.swift */,
 				A9CD65CD2C9ADBE8007F91D3 /* BubbleView.swift */,
 				A9CD65CE2C9ADBE8007F91D3 /* Components.swift */,
@@ -218,14 +234,10 @@
 				A9CD65D42C9ADBE8007F91D3 /* InPogressText.swift */,
 				A9CD65D52C9ADBE8007F91D3 /* PrivacyLinksView.swift */,
 				A9CD65D62C9ADBE8007F91D3 /* ProgressCircleView.swift */,
-				A9CD65D72C9ADBE8007F91D3 /* PromptEditor.swift */,
 				A9CD65D82C9ADBE8007F91D3 /* SavedFixDetail.swift */,
 				A9CD65D92C9ADBE8007F91D3 /* SwipeItemView.swift */,
 				A9CD65DA2C9ADBE8007F91D3 /* ZoomForScreenshots.swift */,
 				A9CD65DB2C9ADBE8007F91D3 /* ZoomView.swift */,
-				A9D123D22C9B853B0047D307 /* TrainerTypePicker.swift */,
-				A9D123D42C9C48460047D307 /* RunDemoModel.swift */,
-				A955A0BF2C9CE66300C91415 /* SavedPromptDetail.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -235,12 +247,13 @@
 			children = (
 				A9CD65DC2C9ADBE8007F91D3 /* Subviews */,
 				A9CD65DD2C9ADBE8007F91D3 /* ContentView.swift */,
-				A9CD65DE2C9ADBE8007F91D3 /* FixView.swift */,
 				A9CD65DF2C9ADBE8007F91D3 /* HomeView.swift */,
+				A9CD65DE2C9ADBE8007F91D3 /* FixView.swift */,
 				A9CD65E02C9ADBE8007F91D3 /* SavedFixes.swift */,
 				A9CD65E12C9ADBE8007F91D3 /* SettingsView.swift */,
 				A9CD65E32C9ADBE8007F91D3 /* WelcomeView.swift */,
-				A955A0BD2C9CDA8400C91415 /* CreatedPromptsView.swift */,
+				A955A0BD2C9CDA8400C91415 /* SavedPrompts.swift */,
+				A955A0C12C9E198D00C91415 /* CreateTrainging.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -260,6 +273,7 @@
 				A9CD65E82C9ADBE8007F91D3 /* ObserverModel+AI.swift */,
 				A9CD65E92C9ADBE8007F91D3 /* ObserverModel+Firebase.swift */,
 				A9CD65EA2C9ADBE8007F91D3 /* ObserverModel+Persist.swift */,
+				A955A0C62C9E242E00C91415 /* ObserverModel+CreateTraining.swift */,
 			);
 			path = Observer;
 			sourceTree = "<group>";
@@ -293,6 +307,7 @@
 				A9CD66292C9ADD8C007F91D3 /* FirebaseStorage */,
 				A9CD662B2C9ADD8C007F91D3 /* FirebaseStorageCombine-Community */,
 				A9CD662E2C9ADDAA007F91D3 /* Zoomable */,
+				A955A0C42C9E235700C91415 /* ZIPFoundation */,
 			);
 			productName = RepTrainerAdmin;
 			productReference = A9CD65AC2C9ADB5D007F91D3 /* RepTrainerAdmin.app */;
@@ -325,6 +340,7 @@
 			packageReferences = (
 				A9CD66162C9ADD8C007F91D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				A9CD662D2C9ADDAA007F91D3 /* XCRemoteSwiftPackageReference "Zoomable" */,
+				A955A0C32C9E235700C91415 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
 			productRefGroup = A9CD65AD2C9ADB5D007F91D3 /* Products */;
 			projectDirPath = "";
@@ -358,7 +374,8 @@
 				A9CD65F52C9ADBE8007F91D3 /* Constants.swift in Sources */,
 				A9CD65FA2C9ADBE8007F91D3 /* BubbleView.swift in Sources */,
 				A9CD65F92C9ADBE8007F91D3 /* BottomNavigationView.swift in Sources */,
-				A955A0BE2C9CDA8400C91415 /* CreatedPromptsView.swift in Sources */,
+				A955A0C72C9E242E00C91415 /* ObserverModel+CreateTraining.swift in Sources */,
+				A955A0BE2C9CDA8400C91415 /* SavedPrompts.swift in Sources */,
 				A9CD65F42C9ADBE8007F91D3 /* AppConfig.swift in Sources */,
 				A9CD65EF2C9ADBE8007F91D3 /* FileOps.swift in Sources */,
 				A9CD66032C9ADBE8007F91D3 /* ProgressCircleView.swift in Sources */,
@@ -369,6 +386,7 @@
 				A9CD65F72C9ADBE8007F91D3 /* LanguageModel.swift in Sources */,
 				A9CD660A2C9ADBE8007F91D3 /* FixView.swift in Sources */,
 				A9CD65F02C9ADBE8007F91D3 /* KeychainHandler.swift in Sources */,
+				A9747CEC2CA20F6E004C9A61 /* TrainingInProgress.swift in Sources */,
 				A9CD66092C9ADBE8007F91D3 /* ContentView.swift in Sources */,
 				A9CD66022C9ADBE8007F91D3 /* PrivacyLinksView.swift in Sources */,
 				A9CD66112C9ADBE8007F91D3 /* ObserverModel.swift in Sources */,
@@ -377,6 +395,7 @@
 				A9CD65F22C9ADBE8007F91D3 /* PhotoPicker.swift in Sources */,
 				A9CD65ED2C9ADBE8007F91D3 /* CustomTextView.swift in Sources */,
 				A9CD66012C9ADBE8007F91D3 /* InPogressText.swift in Sources */,
+				A955A0C22C9E198D00C91415 /* CreateTrainging.swift in Sources */,
 				A9CD65FD2C9ADBE8007F91D3 /* FixItem.swift in Sources */,
 				A9CD66102C9ADBE8007F91D3 /* FirebaseServices.swift in Sources */,
 				A9CD65F62C9ADBE8007F91D3 /* FixModel.swift in Sources */,
@@ -395,6 +414,7 @@
 				A9D123D32C9B853B0047D307 /* TrainerTypePicker.swift in Sources */,
 				A9CD66042C9ADBE8007F91D3 /* PromptEditor.swift in Sources */,
 				A9CD65FB2C9ADBE8007F91D3 /* Components.swift in Sources */,
+				A955A0C92C9E267600C91415 /* SelectFamilyMember.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -543,6 +563,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
@@ -584,6 +605,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=iphoneos*]" = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
@@ -623,6 +645,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		A955A0C32C9E235700C91415 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.19;
+			};
+		};
 		A9CD66162C9ADD8C007F91D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -642,6 +672,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A955A0C42C9E235700C91415 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A955A0C32C9E235700C91415 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
 		A9CD66172C9ADD8C007F91D3 /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A9CD66162C9ADD8C007F91D3 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

@@ -17,39 +17,67 @@ struct PromptEditor: View {
 
   var body: some View {
     VStack {
+      if isTextFieldFocused {
+        HStack{
+          Spacer().frame(width: 120, height: 30)
+          Button(action: {
+            isTextFieldFocused = false
+          }) {
+            SmallButtonNoBackground(text: "Close keyboard", icon: "keyboard")
+          }
+          Spacer()
+        }
+      }
+
+      Spacer().frame(width: 120, height: 60)
+
+      HStack{
+        Button(action: {
+          insertTextAtCursor(" ###trigger### ")
+        }) {
+          SmallButtonNoBackground(text: "Add trigger", icon: "text.insert")
+        }
+
+        Spacer()
+
+        Button(action: {
+          insertTextAtCursor(" ###addition### ")
+        }) {
+          SmallButtonNoBackground(text: "Add addition", icon: "text.insert")
+        }
+      }.padding(.horizontal, 20)
+
       // Custom TextEditor with cursor management
       CustomTextView(text: $text, selectedRange: $selectedRange)
         .focused($isTextFieldFocused)
-        .frame(height:  UIScreen.main.bounds.size.height - 500)
         .padding(.horizontal, 20)
+        .toolbar {
+          ToolbarItemGroup(placement: .keyboard) {
 
-        HStack{
-          Button(action: {
-            insertTextAtCursor(" ###trigger### ")
-          }) {
-            SmallButtonNoBackground(text: "Add trigger", icon: "text.insert")
+            HStack{
+              Spacer()
+
+
+              Spacer()
+              Spacer()
+              Button(action: {
+                isTextFieldFocused = false
+              }) {
+               Text("close")
+              }
+
+            }
           }
-
-          Spacer()
-
-          Button(action: {
-            insertTextAtCursor(" ###addition### ")
-          }) {
-            SmallButtonNoBackground(text: "Add addition", icon: "text.insert")
-          }
-        }.padding(.horizontal, 20)
-
+        }
         Spacer().frame(width: 10, height: 40)
-
-
     }
 
     .onAppear {
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-        isTextFieldFocused = true  // Focus text editor when the view appears
-      }
+//      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//        isTextFieldFocused = true  // Focus text editor when the view appears
+//      }
     }
-    .navigationBarTitle("Save & Back")
+
   }
 
   // Function to insert text at the cursor position

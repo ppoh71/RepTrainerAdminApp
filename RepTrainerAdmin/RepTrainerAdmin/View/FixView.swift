@@ -57,7 +57,7 @@ struct FixView: View {
       }
     }
 
-    .navigationBarTitle("", displayMode: .inline)
+    .navigationBarTitle("Prompt Generator", displayMode: .inline)
     .edgesIgnoringSafeArea(.all)
   }
 }
@@ -155,6 +155,7 @@ struct FixViewProgressSelected: View {
 struct FixViewProgressReady: View {
   @EnvironmentObject var observer: ObserverModel
   @State private var showCopiedText: Bool = false
+  @State private var showPromtpEditorSheet: Bool = false
 
   func getImage() -> Image {
     if let image = observer.fixModel.fixedimage {
@@ -170,6 +171,8 @@ struct FixViewProgressReady: View {
     VStack{
 
       VStack{
+        Spacer().frame(width: 10, height: 20)
+
         HStack{
           Spacer()
           PhotosPicker(selection: $observer.imageSelection,
@@ -181,11 +184,38 @@ struct FixViewProgressReady: View {
           Spacer().frame(width: 30, height: 10)
         }
 
-        Spacer().frame(width: 10, height: 30)
-
-        BubblePromptView(image: Image(uiImage: observer.fixModel.originalImage))
         Spacer().frame(width: 10, height: 20)
-        PromptEditor(text:  $observer.fixModel.prompt)
+
+        BubbleReadyView(cloneImage: Image(uiImage:  observer.fixModel.baseImage ?? UIImage()), originalImage: Image(uiImage:  observer.fixModel.originalImage))
+
+        HStack{
+          Button(action: {
+            observer.startBaseImageGeneration()
+            observer.fixModel.baseImage = UIImage()
+          }) {
+            SmallButtonNoBackground(text: "Re-Run Base Image", icon: "play")
+          }
+          if observer.isLoading {
+            ProgressView()
+          }
+        }
+
+        Spacer().frame(width: 10, height: 40)
+
+        Text(observer.fixModel.prompt)
+          .multilineTextAlignment(.leading)
+          .fixedSize(horizontal: false, vertical: true)
+          .font(.body)
+          .foregroundColor(Color.white)
+          .padding(20)
+        
+          .onTapGesture {
+            showPromtpEditorSheet = true
+          }
+
+       // PromptEditor(text:  $observer.fixModel.prompt)
+
+
         Spacer().frame(width: 10, height: 30)
         RunDemoModel()
 
@@ -195,6 +225,10 @@ struct FixViewProgressReady: View {
 
 
       Spacer().frame(width: 10, height: 130)
+    }
+    .sheet(isPresented: $showPromtpEditorSheet) {
+      PromptEditor(text:  $observer.fixModel.prompt)
+        .presentationDetents([.large])
     }
   }
 }

@@ -21,11 +21,11 @@ extension ObserverModel {
     }
 
     // 2. Create the url we want to read
-    guard let debugURL = URL(string: "http://127.0.0.1:5001/replicatetrainer-a6cef/us-central1/getImagePrompt"), let live = URL(string: "https://us-central1-imagecopy-922ad.cloudfunctions.net/getImagePrompt") else {
+    guard let debugURL = URL(string: "http://127.0.0.1:5001/replicatetrainer-a6cef/us-central1/getImagePrompt"), let live = URL(string: "https://us-central1-replicatetrainer-a6cef.cloudfunctions.net/getImagePrompt") else {
       return
     }
 
-    var request = URLRequest(url: debugURL)
+    var request = URLRequest(url: live)
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpMethod = "POST"
     request.timeoutInterval = 320
@@ -39,11 +39,11 @@ extension ObserverModel {
         request.setValue(tokenString, forHTTPHeaderField: "X-Firebase-AppCheck")
         request.httpBody = encoded
         print("Probing for call")
-        persistFixRequest(urlString: "")
 
         let (data, _) = try await URLSession.shared.data(for: request)
-        print("await chunk \(data)")
-
+        print("await chunk ")
+        print("Received \( String(data: data, encoding: .utf8) )")
+        
         let decoder = JSONDecoder()
         if let dataDecoded = try? decoder.decode(RequestImagePromptResponse.self, from: data) {
           print("Prompt Received \(dataDecoded.prompt )")
@@ -52,7 +52,8 @@ extension ObserverModel {
           /// add prompt end finish
           self.fixModel.prompt = dataDecoded.prompt
           self.fixAction = .fixFinished
-
+          startBaseImageGeneration()
+          
         } else {
           self.fixAction = .fixTimeOut
           print("Decoding went wrong 1")
@@ -65,28 +66,121 @@ extension ObserverModel {
     }
   }
 
-
-  func startIDemomageGenration(model: String, prompt: String) {
+  func  startBaseImageGeneration() {
     _ = Task {
-      await self.generateDemoImageRequest(model: model, prompt: prompt)
+      await self.baseImageGenerationeRequest(model: "no model needed here", prompt:  self.fixModel.prompt, image: self.fixModel.originalImage)
     }
   }
 
-  func generateDemoImageRequest(model: String, prompt: String ) async {
+  func  startIDemoImageGeneration(model: String, prompt: String, image: UIImage) {
+    _ = Task {
+      await self.generateDemoImageRequest(model: model, prompt: prompt, image: image)
+    }
+  }
+
+  func baseImageGenerationeRequest(model: String, prompt: String, image: UIImage) async {
     networkTaskGetImage?.cancel()
 
+    /// cretae response model to post
+    let requestModel = requestResponseModel(image: image, model: model, prompt: prompt)
+
     // encode request model for query
-    guard let encoded = try? JSONEncoder().encode(RequestDemoImageResponse(model: model, prompt: prompt)) else {
+    guard let encoded = try? JSONEncoder().encode(requestModel) else {
       print ("Failed to encode Order")
       return
     }
 
     // 2. Create the url we want to read
-    guard let debugURL = URL(string: "http://127.0.0.1:5001/replicatetrainer-a6cef/us-central1/getDemoImage"), let live = URL(string: "https://us-central1-imagecopy-922ad.cloudfunctions.net/getImage") else {
+    guard let debugURL = URL(string: "http://127.0.0.1:5001/replicatetrainer-a6cef/us-central1/getPromptBaseImage"), let live = URL(string: "https://us-central1-replicatetrainer-a6cef.cloudfunctions.net/getPromptBaseImage") else {
       return
     }
 
-    var request = URLRequest(url: debugURL)
+    isLoading = true
+
+    var request = URLRequest(url: live)
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.httpMethod = "POST"
+    request.timeoutInterval = 320
+
+    networkTaskGetImage = Task {
+
+      do {
+
+        let token = try await AppCheck.appCheck().token(forcingRefresh: false)
+        let tokenString = token.token
+        request.setValue(tokenString, forHTTPHeaderField: "X-Firebase-AppCheck")
+        request.httpBody = encoded
+
+        print("Probing for call")
+        let (data, _) = try await URLSession.shared.data(for: request)
+
+        let decoder = JSONDecoder()
+        print("data received")
+        print(String(decoding: data, as: UTF8.self))
+
+        if let dataDecoded = try? decoder.decode(RequestDemoImageGeneratedResponse.self, from: data) {
+          print("image Data \(dataDecoded)")
+
+          //   if let outputString = dataDecoded.response {
+          print("Decode Success")
+          print("url", dataDecoded.response)
+
+          //fixModel.fixedUrl = dataDecoded.response.first
+
+          /// Download generated image
+          do {
+            if let url = URL(string: dataDecoded.response.first ?? "") {
+              if let image = try await FileOps.downloadImage(from: url) {
+                isLoading = false
+                self.fixModel.baseImage = image
+                self.fixModel.fixedUrl = url.absoluteString
+                self.persistSuccessRequest(urlString: self.fixModel.fixedUrl ?? "https://apple.com", image: image)
+                generateThumbnail(requestId: self.fixModel.requestId, fixUrlString: self.fixModel.fixedUrl, fixedImage: image)
+                print("Got an image \(dataDecoded.response)")
+              }
+            }
+          } catch {
+            self.fixAction = .fixTimeOut
+            print("Error callHttpStreamEndpoint 1")
+            print(error.localizedDescription)
+            isLoading = false
+          }
+
+          // }
+        } else {
+          print("Decoding went wrong")
+          isLoading = false
+        }
+
+
+      } catch {
+        print("Error Image Geneatiom Request !!!!!")
+        //self.fixAction = .fixTimeOut
+        isLoading = false
+        print(error)
+      }
+    }
+  }
+  func generateDemoImageRequest(model: String, prompt: String, image: UIImage ) async {
+    networkTaskGetImage?.cancel()
+
+    /// cretae response model to post
+    let requestModel = requestResponseModel(image: image, model: model, prompt: prompt)
+    
+    // encode request model for query
+    guard let encoded = try? JSONEncoder().encode(requestModel) else {
+      print ("Failed to encode Order")
+      return
+    }
+
+    // 2. Create the url we want to read
+    guard let debugURL = URL(string: "http://127.0.0.1:5001/replicatetrainer-a6cef/us-central1/getDemoImage"), let live = URL(string: "https://us-central1-replicatetrainer-a6cef.cloudfunctions.net/getDemoImage") else {
+      return
+    }
+
+    isLoading = true
+
+    var request = URLRequest(url: live)
     request.setValue("application/json", forHTTPHeaderField: "Content-Type")
     request.httpMethod = "POST"
     request.timeoutInterval = 320
@@ -121,10 +215,8 @@ extension ObserverModel {
               if let url = URL(string: dataDecoded.response.first ?? "") {
                 if let image = try await FileOps.downloadImage(from: url) {
                   self.fixModel.fixedimage = image
-                  self.persistSuccessRequest(urlString: self.fixModel.fixedUrl ?? "https://apple.com", image: image)
                   self.fixAction = .fixFinished
-                  generateThumbnail(requestId: self.fixModel.requestId, fixUrlString: self.fixModel.fixedUrl, fixedImage: image)
-
+                  isLoading = false
                   print("Got an image \(dataDecoded.response)")
                 }
               }
@@ -132,17 +224,20 @@ extension ObserverModel {
               self.fixAction = .fixTimeOut
               print("Error callHttpStreamEndpoint 1")
               print(error.localizedDescription)
+              isLoading = false
             }
 
          // }
         } else {
           print("Decoding went wrong")
+          isLoading = false
         }
 
 
       } catch {
         print("Error Image Geneatiom Request !!!!!")
         //self.fixAction = .fixTimeOut
+        isLoading = false
         print(error)
       }
     }

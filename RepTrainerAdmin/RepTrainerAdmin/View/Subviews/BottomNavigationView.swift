@@ -23,131 +23,158 @@ struct BottomNavigation: View {
       VStack(spacing: 0){
         Spacer().frame(width: 10, height: 10)
 
-        HStack {
+        ScrollView(Axis.Set.horizontal, showsIndicators: false) {
+          HStack {
 
-          Spacer()
-          VStack{
-            Image(systemName: "house")
-              .foregroundColor(Color.basicText)
-              .font(Font.system(size: iconSize, weight: .regular))
-              .frame(height: 25)
+            Spacer()
+            VStack{
+              Image(systemName: "house")
+                .foregroundColor(Color.basicText)
+                .font(Font.system(size: iconSize, weight: .regular))
+                .frame(height: 25)
 
-            Text("Home")
-              .foregroundStyle(Color.basicText)
-              .font(Font.system(size: fontSize, weight: .regular))
+              Text("Home")
+                .foregroundStyle(Color.basicText)
+                .font(Font.system(size: fontSize, weight: .regular))
 
-            Rectangle()
-              .fill(observer.currentPath == .home ? Color.basicPrimary : Color.clear)
-              .frame(width: rectSize, height: 3, alignment: .bottom)
-              .cornerRadius(15)
+              Rectangle()
+                .fill(observer.currentPath == .home ? Color.basicPrimary : Color.clear)
+                .frame(width: rectSize, height: 3, alignment: .bottom)
+                .cornerRadius(15)
 
-          }.opacity(observer.currentPath == .home ? 1 :  0.7)
-            .onTapGesture {
-              observer.path = NavigationPath()
-              observer.currentPath = .home
+            }.opacity(observer.currentPath == .home ? 1 :  0.7)
+              .onTapGesture {
+                observer.path = NavigationPath()
+                observer.currentPath = .home
 
-            }
-            .accessibilityLabel(Text("keyMenuButtonHome"))
+              }
+              .accessibilityLabel(Text("keyMenuButtonHome"))
 
-          Spacer()
-          VStack{
-            Image(systemName: "photo.on.rectangle.angled")
-              .foregroundColor(Color.basicText)
-              .font(Font.system(size: iconSize, weight: .regular))
-              .frame(height: 25)
+            Spacer().frame(width: 20, height: 10)
 
-            Text("Make Prompt")
-              .foregroundStyle(Color.basicText)
-              .font(Font.system(size: fontSize, weight: .regular))
+            VStack{
+              Image(systemName: "text.bubble")
+                .foregroundColor(Color.basicText)
+                .font(Font.system(size: iconSize, weight: .regular))
+                .frame(height: 25)
 
-            Rectangle()
-              .fill(observer.currentPath == .fix ? Color.basicPrimary : Color.clear)
-              .frame(width: rectSize, height: 3, alignment: .bottom)
-              .cornerRadius(15)
+              Text("Make Prompt")
+                .foregroundStyle(Color.basicText)
+                .font(Font.system(size: fontSize, weight: .regular))
 
-          }.opacity(observer.currentPath == .fix ? 1 :  0.7)
-            .onTapGesture {
-              observer.currentPath = .fix
-            }
-            .accessibilityLabel(Text("keyMenuButtonChat"))
+              Rectangle()
+                .fill(observer.currentPath == .fix ? Color.basicPrimary : Color.clear)
+                .frame(width: rectSize, height: 3, alignment: .bottom)
+                .cornerRadius(15)
 
-          Spacer()
-          VStack{
-            Image(systemName: "photo.on.rectangle.angled")
-              .foregroundColor(Color.basicText)
-              .font(Font.system(size: iconSize, weight: .regular))
-              .frame(height: 25)
+            }.opacity(observer.currentPath == .fix ? 1 :  0.7)
+              .onTapGesture {
+                observer.currentPath = .fix
+              }
+              .accessibilityLabel(Text("keyMenuButtonChat"))
 
-            Text("All Prompts")
-              .foregroundStyle(Color.basicText)
-              .font(Font.system(size: fontSize, weight: .regular))
+            Spacer().frame(width: 20, height: 10)
 
-            Rectangle()
-              .fill(observer.currentPath == .savedPrompts ? Color.basicPrimary : Color.clear)
-              .frame(width: rectSize, height: 3, alignment: .bottom)
-              .cornerRadius(15)
+            VStack{
+              Image(systemName: "photo.on.rectangle.angled")
+                .foregroundColor(Color.basicText)
+                .font(Font.system(size: iconSize, weight: .regular))
+                .frame(height: 25)
 
-          }.opacity(observer.currentPath == .savedPrompts ? 1 :  0.7)
-            .onTapGesture {
-              observer.currentPath = .savedPrompts
-            }
-            .accessibilityLabel(Text("keyMenuButtonChat"))
-          Spacer()
+              Text("All Prompts")
+                .foregroundStyle(Color.basicText)
+                .font(Font.system(size: fontSize, weight: .regular))
 
-          VStack{
-            Image(systemName: "square.stack.3d.down.right")
-              .foregroundColor(Color.basicText)
-              .font(Font.system(size: iconSize, weight: .regular))
-              .rotationEffect(.degrees(120))
-              .frame(height: 25)
+              Rectangle()
+                .fill(observer.currentPath == .savedPrompts ? Color.basicPrimary : Color.clear)
+                .frame(width: rectSize, height: 3, alignment: .bottom)
+                .cornerRadius(15)
 
-            Text("History")
-              .foregroundStyle(Color.basicText)
-              .font(Font.system(size: fontSize, weight: .regular))
+            }.opacity(observer.currentPath == .savedPrompts ? 1 :  0.7)
+              .onTapGesture {
+                observer.currentPath = .savedPrompts
+              }
+              .accessibilityLabel(Text("keyMenuButtonChat"))
 
-            Rectangle()
-              .fill(observer.currentPath == .savedFixes ? Color.basicPrimary : Color.clear)
-              .frame(width: rectSize, height: 3, alignment: .bottom)
-              .cornerRadius(15)
+            Spacer().frame(width: 20, height: 10)
 
-          }.opacity(observer.currentPath == .savedFixes ? 1 :  0.7)
-            .onTapGesture {
-              observer.currentPath = .savedFixes
-            }
-            .accessibilityLabel(Text("keyMenuButtonSavedChats"))
+            VStack{
+              Image(systemName: "ant")
+                .foregroundColor(Color.basicText)
+                .font(Font.system(size: iconSize, weight: .regular))
+                .frame(height: 25)
 
-          Spacer()
-          VStack{
+              Text("Create Training")
+                .foregroundStyle(Color.basicText)
+                .font(Font.system(size: fontSize, weight: .regular))
 
-            Image(systemName: "ellipsis.bubble")
-              .foregroundColor(Color.basicText)
-              .font(Font.system(size: iconSize, weight: .regular))
-              .frame(height: 25)
+              Rectangle()
+                .fill(observer.currentPath == .createTraining ? Color.basicPrimary : Color.clear)
+                .frame(width: rectSize, height: 3, alignment: .bottom)
+                .cornerRadius(15)
 
-            Text("More")
-              .foregroundStyle(Color.basicText)
-              .font(Font.system(size: fontSize, weight: .regular))
+            }.opacity(observer.currentPath == .createTraining ? 1 :  0.7)
+              .onTapGesture {
+                observer.currentPath = .createTraining
+              }
+              .accessibilityLabel(Text("keyMenuButtonChat"))
 
-            Rectangle()
-              .fill(observer.currentPath == .settings ? Color.basicPrimary : Color.clear)
-              .frame(width: rectSize, height: 3, alignment: .bottom)
-              .cornerRadius(15)
+            Spacer().frame(width: 20, height: 10)
 
-          }.opacity(observer.currentPath == .settings ? 1 :  0.7)
-            .onTapGesture {
-              observer.currentPath = .settings
-            }
-            .accessibilityLabel(Text("keyMenuButtonMore"))
+            VStack{
+              Image(systemName: "square.stack.3d.down.right")
+                .foregroundColor(Color.basicText)
+                .font(Font.system(size: iconSize, weight: .regular))
+                .rotationEffect(.degrees(120))
+                .frame(height: 25)
+
+              Text("History")
+                .foregroundStyle(Color.basicText)
+                .font(Font.system(size: fontSize, weight: .regular))
+
+              Rectangle()
+                .fill(observer.currentPath == .savedFixes ? Color.basicPrimary : Color.clear)
+                .frame(width: rectSize, height: 3, alignment: .bottom)
+                .cornerRadius(15)
+
+            }.opacity(observer.currentPath == .savedFixes ? 1 :  0.7)
+              .onTapGesture {
+                observer.currentPath = .savedFixes
+              }
+              .accessibilityLabel(Text("keyMenuButtonSavedChats"))
+
+            Spacer().frame(width: 20, height: 10)
+
+            VStack{
+
+              Image(systemName: "ellipsis.bubble")
+                .foregroundColor(Color.basicText)
+                .font(Font.system(size: iconSize, weight: .regular))
+                .frame(height: 25)
+
+              Text("More")
+                .foregroundStyle(Color.basicText)
+                .font(Font.system(size: fontSize, weight: .regular))
+
+              Rectangle()
+                .fill(observer.currentPath == .settings ? Color.basicPrimary : Color.clear)
+                .frame(width: rectSize, height: 3, alignment: .bottom)
+                .cornerRadius(15)
+
+            }.opacity(observer.currentPath == .settings ? 1 :  0.7)
+              .onTapGesture {
+                observer.currentPath = .settings
+              }
+              .accessibilityLabel(Text("keyMenuButtonMore"))
 
 
-          Spacer()
+            Spacer()
+          }
         }
 
         HStack{
           Spacer().frame(height: 30)
         }.background(Color(UIColor.secondarySystemBackground))
-
-
       }.background(Color(UIColor.secondarySystemBackground))
 
 //      ZStack{

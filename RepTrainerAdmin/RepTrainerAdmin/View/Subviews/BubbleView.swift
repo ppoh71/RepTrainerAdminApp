@@ -107,6 +107,7 @@ struct BubbleReadyView: View {
           .frame(width: UIScreen.main.bounds.size.width - imagePadding, height: UIScreen.main.bounds.size.width - imagePadding )
           .clipShape(Circle())
           .offset(x:0, y: -70)
+          .background(ProgressView())
     }
   }
 }

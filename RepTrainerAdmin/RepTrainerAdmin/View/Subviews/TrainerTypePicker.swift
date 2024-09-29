@@ -17,7 +17,7 @@ struct TrainerTypePicker: View {
       Picker("Select a Model", selection: $observer.trainerType) {
         ForEach(TrainerType.allCases) { model in
           Text(model.rawValue).tag(model)
-            .font(Font.system(size: 14, weight: .regular))
+            .font(Font.system(size: 20, weight: .bold))
         }
       }
       .pickerStyle(MenuPickerStyle())   // You can choose another style here
@@ -25,9 +25,15 @@ struct TrainerTypePicker: View {
       .onChange(of: observer.trainerType) { oldState, newState in
         // Call action function
         print("Trainer Tyoe is now \(observer.trainerType)")
+        Utils.setTrainerType(observer.trainerType)
       }
+    }.onAppear{
+      if let storedTrainerType = Utils.getTrainerType() {
+        self.observer.trainerType = storedTrainerType
+      }
+
     }
-    .navigationTitle("Model Picker")
+
   }
 }
 

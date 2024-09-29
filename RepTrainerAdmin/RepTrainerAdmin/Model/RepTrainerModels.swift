@@ -10,12 +10,14 @@ import SwiftUI
 
 enum TrainerType: String, CaseIterable, Identifiable {
   case family = "family"
+  case kids = "kids"
   case baby = "baby"
 
   var id: String { self.rawValue }  // Conform to Identifiable
 }
 
-struct SelectedDemoModel{
+struct SelectedDemoModel: Identifiable, Hashable{
+  var id = UUID()
   var desc: String
   var modelName: String
 }
@@ -28,15 +30,28 @@ struct DemoModelToRun: Codable {
   var userID: String
 }
 
+enum PromptOptions: String, CaseIterable, Identifiable {
+  case boys = "boys"
+  case girls = "girls"
+  case allGender = "baby"
+  case western = "western"
+  case easter = "eastern"
+  case middelEast = "middleEast"
+
+  var id: String { self.rawValue }  // Conform to Identifiable
+}
+
 struct CreatedPrompt: Codable, Hashable {
   var desc: String
   var imageURL: String
   var prompt: String
+  var options: [String]?
+  var sortOrder: Int = 1
 
   func getImage() async -> UIImage?{
     do {
       if let url = URL(string: self.prompt) {
-        if let image = try await FileOps.downloadImage(from: url) {
+        if (try await FileOps.downloadImage(from: url)) != nil {
           
         }
       }
@@ -46,5 +61,12 @@ struct CreatedPrompt: Codable, Hashable {
     }
     return nil
   }
+}
 
+struct NewTrainingModel: Codable {
+  var modelName: String = ""
+  var promptAddition: String = ""
+  var zipURL: String = ""
+  var userId: String = ""
+  var traingingType: String = ""
 }
