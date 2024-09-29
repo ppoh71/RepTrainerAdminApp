@@ -26,18 +26,12 @@ struct SavedPromptsView: View {
     return (goal - has) > 0 ? (goal - has) : 1
   }
 
-  func moveItem(in array: [(key: String, value: CreatedPrompt)], from source: IndexSet, to destination: Int) {
-    var updatedArray = array
-    updatedArray.move(fromOffsets: source, toOffset: destination)
-
-    // Update the dictionary with new sort orders
-    for (index, element) in updatedArray.enumerated() {
-      let key = element.key
-      observer.createdPromptsList[key]?.sortOrder = index
-
-      guard let promptKey = observer.createdPromptsList[key] else {print("ni key"); return }
-      print("move item: \(key) newOrder: \(index)")
-      FirebaseService.updateSortOrderForPrompt(db: observer.db, documentID: key, type: observer.trainerType.rawValue, newOrder: index)
+  func moveItemAndUpdateFirestore(fromOffsets indices: IndexSet, toOffset newOffset: Int) {
+    observer.createdPromptsList.move(fromOffsets: indices, toOffset: newOffset)
+    for (index, prompt) in observer.createdPromptsList.enumerated() {
+      let newSortOrder = index // The new index is the new sortOrder
+      let documentId = prompt.id // Assuming `id` contains the Firestore document ID
+      FirebaseService.updateSortOrderForPrompt(db: observer.db, documentID: documentId, type: observer.trainerType.rawValue, newOrder: newSortOrder)
     }
   }
 
@@ -57,39 +51,43 @@ struct SavedPromptsView: View {
       Spacer().frame(width: 10, height: 60)
 
       if isEditingOrder {
+
         List {
-          ForEach(Array(observer.createdPromptsList), id: \.key) { (documentID, savedPrompt) in
+          ForEach(observer.createdPromptsList.indices, id: \.self) { index in
+            let prompt = observer.createdPromptsList[index]
             HStack{
-              GridItemViewPrompts(prompt: savedPrompt)
+              GridItemViewPrompts(prompt: prompt)
                 .frame(width: 90, height: 90)
-
               Spacer()
-
               Image(systemName: "chevron.up.chevron.down")
                 .foregroundColor(Color.basicText)
                 .font(Font.system(size: 20, weight: .regular))
             }
+
           }
           .onMove(perform: { indices, newOffset in
-            moveItem(in: Array(observer.createdPromptsList), from: indices, to: newOffset)
+            moveItemAndUpdateFirestore(fromOffsets: indices, toOffset: newOffset)
           })
         }
+
       }
 
       if !isEditingOrder {
         ScrollView(Axis.Set.vertical, showsIndicators: false) {
           LazyVGrid(columns: [.init(.adaptive(minimum: 100, maximum: .infinity), spacing: 5)] , spacing: 5) {
-            ForEach(Array(observer.createdPromptsList), id: \.key) { (documentID, savedPrompt) in
-              GridItemViewPrompts(prompt: savedPrompt)
+
+            ForEach( observer.createdPromptsList, id: \.self ) { prompt in
+
+              GridItemViewPrompts(prompt: prompt)
                 .onTapGesture {
-                  print("doc \(documentID)")
-                  if let url =  URL(string: savedPrompt.imageURL) {
+                  print("doc \(prompt.id)")
+                  if let url =  URL(string: prompt.imageURL) {
                     print("url ok ")
 
-                    docId = documentID
+                    docId = prompt.id
                     detailUrl = url
-                    fixPrompt = savedPrompt.prompt
-                    options = savedPrompt.options ?? ["No options"]
+                    fixPrompt = prompt.prompt
+                    options = prompt.options ?? ["No options"]
                     showDetailSheet = true
                   } else {
                     print("nope")
@@ -117,6 +115,8 @@ struct SavedPromptsView: View {
           self.observer.getCreatedPrompts()
         }
       }
+    }.onAppear{
+      self.observer.getCreatedPrompts()
     }
     .navigationBarTitle("Saved Photo Copies", displayMode: .inline)
 

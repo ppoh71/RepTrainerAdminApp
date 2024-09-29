@@ -216,9 +216,9 @@ final class FirebaseService {
         }
 
         print("Download URL: \(downloadURL)")
-
-        // Save the download URL to Firestore
-        db.collection("prompts").document(type).collection("prompt").addDocument(data: [
+        var ref: DocumentReference? = nil
+        ref = db.collection("prompts").document(type).collection("prompt").addDocument(data: [
+          "id": "", // Placeholder, will be updated
           "imageURL": downloadURL,
           "prompt": prompt,
           "desc": desc,
@@ -230,7 +230,17 @@ final class FirebaseService {
             completion(.failure(error))
           } else {
             print("Successfully saved image URL to Firestore")
-            completion(.success(downloadURL))
+
+            // Now update the 'id' field with the document ID
+            ref?.updateData(["id": ref!.documentID]) { updateError in
+              if let updateError = updateError {
+                print("Failed to update document ID: \(updateError.localizedDescription)")
+                completion(.failure(updateError))
+              } else {
+                print("Successfully updated document with its ID")
+                completion(.success(downloadURL))
+              }
+            }
           }
         }
       }
@@ -273,8 +283,8 @@ final class FirebaseService {
   }
 
 
-  class func downloadPromptData(db: Firestore?, type: String) async throws -> [String: CreatedPrompt]? {
-    guard let db = db else { print("G. get tut"); return nil }
+  class func downloadPromptData(db: Firestore?, type: String) async throws -> [CreatedPrompt]? {
+    guard let db = db else {print("G. get tut"); return nil }
 
     // Reference to the collection
     let collectionRef = db.collection("prompts").document(type).collection("prompt")
@@ -282,9 +292,9 @@ final class FirebaseService {
     do {
       // Fetch all documents in the collection
       let snapshot = try await collectionRef.getDocuments()
-
+      
       // Dictionary to store document IDs and their corresponding CreatedPrompt models
-      var allPrompts: [String: CreatedPrompt] = [:]
+      var allPrompts: [CreatedPrompt] = []
 
       // Loop through each document in the collection
       for document in snapshot.documents {
@@ -292,20 +302,15 @@ final class FirebaseService {
           // Decode the document data into the CreatedPrompt model
           if let prompt = try document.data(as: CreatedPrompt?.self) {
             // Store the document ID as the key and the CreatedPrompt as the value
-            allPrompts[document.documentID] = prompt
+            allPrompts.append(prompt)
           }
         } catch {
           print("Error decoding document \(document.documentID): \(error)")
         }
       }
 
-      // Convert dictionary to an array of tuples [(String, CreatedPrompt)]
-      var sortedArray = allPrompts.sorted { $0.value.sortOrder < $1.value.sortOrder }
-
-      // Optionally, convert back to dictionary if you need it in dictionary format
-      let sortedPrompts = Dictionary(uniqueKeysWithValues: sortedArray)
-
-      return sortedPrompts // Return the sorted dictionary
+      let sortedPrompts = allPrompts.sorted { $0.sortOrder < $1.sortOrder }
+      return sortedPrompts
 
     } catch {
       print("Error fetching documents: \(error.localizedDescription)")

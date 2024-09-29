@@ -40,7 +40,7 @@ class ObserverModel: ObservableObject {
   @Published var trainerType: TrainerType = .family
   @Published var selectedDemoModelList: [SelectedDemoModel] = [SelectedDemoModel]()
   @Published var selectedDemoModel: SelectedDemoModel = SelectedDemoModel(id: UUID(), desc: "", modelName: "")
-  @Published var createdPromptsList: [String: CreatedPrompt] = [:]
+  @Published var createdPromptsList: [CreatedPrompt] = []
 
   /// Purchase
   @Published var showPaywall: Bool = false

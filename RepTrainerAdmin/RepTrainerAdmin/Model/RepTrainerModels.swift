@@ -42,6 +42,7 @@ enum PromptOptions: String, CaseIterable, Identifiable {
 }
 
 struct CreatedPrompt: Codable, Hashable {
+  var id: String
   var desc: String
   var imageURL: String
   var prompt: String
@@ -61,6 +62,7 @@ struct CreatedPrompt: Codable, Hashable {
     }
     return nil
   }
+
 }
 
 struct NewTrainingModel: Codable {
