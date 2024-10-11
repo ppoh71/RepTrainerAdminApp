@@ -19,6 +19,7 @@ struct SavedPromptsView: View {
   @State private var docId: String = "test"
   @State private var options: [String] = [String]()
   @State private var isEditingOrder: Bool = false
+  @State private var selectedOptions: [String] = []
 
   func getNumber() -> Int {
     let has = observer.createdPromptsList.count
@@ -35,17 +36,59 @@ struct SavedPromptsView: View {
     }
   }
 
+  func toggleOption(_ option: PromptOptions) {
+    if let index = selectedOptions.firstIndex(of: option.rawValue) {
+      selectedOptions.remove(at: index)  // Remove if already selected
+    } else {
+      selectedOptions.append(option.rawValue)  // Add if not selected
+    }
+  }
+
+  func isSelected(_ option: PromptOptions) -> Bool {
+    selectedOptions.contains(option.rawValue)
+  }
+
+  func displayFromPromptOptions(promptOptions: [String]?) -> Bool {
+    guard let promptOptions = promptOptions else {print("No prompt options"); return true}
+    guard selectedOptions.count > 0  else {print("No options selected"); return true}
+    let commonStrings = promptOptions.filter { selectedOptions.contains($0) }
+    return commonStrings.count > 0 ? true : false
+  }
+
   var body: some View {
 
     VStack{
-      Button(action: {
-        isEditingOrder.toggle()
-      }) {
-        Text(isEditingOrder ? "Done Editing" : "Edit Order")
-          .padding()
-          .background(Color.blue)
-          .foregroundColor(.white)
-          .cornerRadius(8)
+
+      HStack{
+        ScrollView(.horizontal, showsIndicators: false) {
+          HStack {
+            Spacer().frame(width: 10, height: 20)
+            ForEach(PromptOptions.allCases) { option in
+              Button(action: {
+                toggleOption(option)
+              }) {
+                Text(option.rawValue.capitalized)
+                  .font(.system(size: 14))
+                  .padding(10)
+                  .background(isSelected(option) ? Color.basicPrimary : Color.basicBackground)
+                  .foregroundColor(.basicText)
+                  .cornerRadius(8)
+              }
+            }
+            Spacer().frame(width: 10, height: 20)
+          }
+        }
+
+        Button(action: {
+          isEditingOrder.toggle()
+        }) {
+          Text(isEditingOrder ? "Done Editing" : "Edit Order")
+            .padding()
+            .background(Color.blue)
+            .foregroundColor(.white)
+            .cornerRadius(8)
+        }
+
       }
 
       Spacer().frame(width: 10, height: 60)
@@ -69,7 +112,6 @@ struct SavedPromptsView: View {
             moveItemAndUpdateFirestore(fromOffsets: indices, toOffset: newOffset)
           })
         }
-
       }
 
       if !isEditingOrder {
@@ -78,21 +120,25 @@ struct SavedPromptsView: View {
 
             ForEach( observer.createdPromptsList, id: \.self ) { prompt in
 
-              GridItemViewPrompts(prompt: prompt)
-                .onTapGesture {
-                  print("doc \(prompt.id)")
-                  if let url =  URL(string: prompt.imageURL) {
-                    print("url ok ")
+              if displayFromPromptOptions(promptOptions: prompt.options) {
 
-                    docId = prompt.id
-                    detailUrl = url
-                    fixPrompt = prompt.prompt
-                    options = prompt.options ?? ["No options"]
-                    showDetailSheet = true
-                  } else {
-                    print("nope")
+                // if prompt.
+                GridItemViewPrompts(prompt: prompt)
+                  .onTapGesture {
+                    print("doc \(prompt.id)")
+                    if let url =  URL(string: prompt.imageURL) {
+                      print("url ok ")
+
+                      docId = prompt.id
+                      detailUrl = url
+                      fixPrompt = prompt.prompt
+                      options = prompt.options ?? ["No options"]
+                      showDetailSheet = true
+                    } else {
+                      print("nope")
+                    }
                   }
-                }
+              }
             }
 
             if getNumber() > 0 {

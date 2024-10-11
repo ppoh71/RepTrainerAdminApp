@@ -36,20 +36,21 @@ extension ObserverModel {
     checkForFailedRequests()
   }
 
-  func persistFixRequest(urlString: String) {
-    // save json with fix info
-    let newJson = FixJson(id: fixModel.requestId, fixURL: urlString, prompt: fixModel.prompt)
-    FileOps.createFixJson(fixJson: newJson)
-  }
+//  func persistFixRequest(urlString: String) {
+//    // save json with fix info
+//    let newJson = FixJson(id: fixModel.requestId, fixURL: urlString, prompt: fixModel.prompt)
+//    FileOps.createFixJson(fixJson: newJson)
+//  }
 
-  func persistSuccessRequest(urlString: String, image: UIImage) {
+  func persistSuccessRequest(id: String, urlString: String, image: UIImage) {
     // save json with fix info
-    var newJson = FixJson(id: fixModel.requestId, fixURL: urlString, prompt: fixModel.prompt)
+    var newJson = FixJson(id: id, fixURL: urlString, prompt: fixModel.prompt)
     newJson.size = image.getFileSizeInMB()
     newJson.dimenson = image.dimensions
     newJson.fileType = image.imageType
-
     FileOps.createFixJson(fixJson: newJson)
+
+    generateThumbnail(requestId: id, fixUrlString: urlString, fixedImage: image)
   }
 
   func generateThumbnail(requestId: String, fixUrlString: String?, fixedImage: UIImage?) {

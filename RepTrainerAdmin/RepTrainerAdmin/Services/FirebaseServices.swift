@@ -360,9 +360,9 @@ final class FirebaseService {
   }
 
 
-  class func uploadZipAndStartTraining(userId: String, zipFileURL: URL, completion: @escaping (Result<URL, Error>) -> Void) {
+  class func uploadZipAndStartTraining(userId: String, modelName: String, zipFileURL: URL, completion: @escaping (Result<URL, Error>) -> Void) {
     // Create a reference to Firebase Storage
-    let storageRef = Storage.storage().reference().child("training_images/\(userId)/data.zip")
+    let storageRef = Storage.storage().reference().child("training_images/\(userId)/\(modelName)/data.zip")
 
     // Upload the file
     let uploadTask = storageRef.putFile(from: zipFileURL, metadata: nil) { metadata, error in

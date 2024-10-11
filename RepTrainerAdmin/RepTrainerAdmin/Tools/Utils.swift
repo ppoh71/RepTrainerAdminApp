@@ -102,7 +102,7 @@ class Utils{
             Utils.registerUser()
           } else {
 
-            print("success looged in")
+            print("success looged in \(Auth.auth().currentUser?.uid)")
           }
         })
       } else {

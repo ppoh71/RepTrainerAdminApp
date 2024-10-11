@@ -187,6 +187,11 @@ struct FixViewProgressReady: View {
         Spacer().frame(width: 10, height: 20)
 
         BubbleReadyView(cloneImage: Image(uiImage:  observer.fixModel.baseImage ?? UIImage()), originalImage: Image(uiImage:  observer.fixModel.originalImage))
+          .frame(height:  UIScreen.main.bounds.size.width + 120)
+          .clipped()
+          .background(Color.green)
+
+        Spacer().frame(width: 10, height: 20)
 
         HStack{
           Button(action: {
@@ -213,10 +218,8 @@ struct FixViewProgressReady: View {
             showPromtpEditorSheet = true
           }
 
-       // PromptEditor(text:  $observer.fixModel.prompt)
-
-
         Spacer().frame(width: 10, height: 30)
+
         RunDemoModel()
 
       }

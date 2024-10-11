@@ -80,8 +80,7 @@ struct BubbleReadyView: View {
 
   var body: some View {
 
-    VStack{
-
+    VStack(spacing: 0){
       HStack(alignment: .top){
         Spacer().frame(width: 10, height: 10)
 
@@ -100,15 +99,14 @@ struct BubbleReadyView: View {
         Spacer()
         Spacer().frame(width: 10, height: 10)
       }
-
         cloneImage
           .resizable()
           .aspectRatio(contentMode: .fill)
           .frame(width: UIScreen.main.bounds.size.width - imagePadding, height: UIScreen.main.bounds.size.width - imagePadding )
           .clipShape(Circle())
-          .offset(x:0, y: -70)
+          .offset(x:0, y: -0)
           .background(ProgressView())
-    }
+    }.background(Color.red)
   }
 }
 
@@ -126,7 +124,8 @@ struct BubblePromptView: View {
         .aspectRatio(contentMode: .fill)
         .frame(width: UIScreen.main.bounds.size.width - imagePadding, height: UIScreen.main.bounds.size.width - imagePadding )
         .clipShape(Circle())
-    }
+
+    }.background(Color.red)
   }
 }
 

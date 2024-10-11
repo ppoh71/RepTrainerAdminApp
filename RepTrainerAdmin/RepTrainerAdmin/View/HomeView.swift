@@ -97,6 +97,7 @@ struct HomeContent: View {
               .multilineTextAlignment(.leading)
 
             Spacer().frame(width: 10, height: 60)
+
             
             Text("Working in:")
               .foregroundColor(.basicText)

@@ -32,7 +32,7 @@ extension ObserverModel {
       do {
         if let zipFileURL = try FileOps.createZipFromImages(images: newTraingingSelctedImages, zipFileName: "data") {
 
-          FirebaseService.uploadZipAndStartTraining(userId: newTrainging.userId, zipFileURL: zipFileURL) { result in
+          FirebaseService.uploadZipAndStartTraining(userId: newTrainging.userId, modelName: self.newTrainging.modelName, zipFileURL: zipFileURL) { result in
             switch result {
             case .success(let downloadURL):
               print("ZIP file uploaded. URL: \(downloadURL)")

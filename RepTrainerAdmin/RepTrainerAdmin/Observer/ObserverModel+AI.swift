@@ -134,8 +134,9 @@ extension ObserverModel {
                 isLoading = false
                 self.fixModel.baseImage = image
                 self.fixModel.fixedUrl = url.absoluteString
-                self.persistSuccessRequest(urlString: self.fixModel.fixedUrl ?? "https://apple.com", image: image)
-                generateThumbnail(requestId: self.fixModel.requestId, fixUrlString: self.fixModel.fixedUrl, fixedImage: image)
+
+                self.persistSuccessRequest(id: UUID().uuidString ,urlString: self.fixModel.fixedUrl ?? "https://apple.com", image: image)
+
                 print("Got an image \(dataDecoded.response)")
               }
             }
@@ -208,7 +209,7 @@ extension ObserverModel {
             print("Decode Success")
             print("url", dataDecoded.response)
 
-          fixModel.fixedUrl = dataDecoded.response.first
+            fixModel.fixedUrl = dataDecoded.response.first
 
             /// Download generated image
             do {
@@ -216,6 +217,7 @@ extension ObserverModel {
                 if let image = try await FileOps.downloadImage(from: url) {
                   self.fixModel.fixedimage = image
                   self.fixAction = .fixFinished
+                  self.persistSuccessRequest(id: UUID().uuidString ,urlString: self.fixModel.fixedUrl ?? "https://apple.com", image: image)
                   isLoading = false
                   print("Got an image \(dataDecoded.response)")
                 }

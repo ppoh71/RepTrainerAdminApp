@@ -26,7 +26,35 @@ struct SavedPromptDetail: View {
   @State private var downloalImage = Image(uiImage: UIImage())
   @State private var showDownload: Bool = false
   @State private var showDeleteSheet: Bool = false
+  @State private var downloadesUIImage: UIImage = UIImage()
+  @State private var downloadedUIImageState: Bool = false
 
+  func  startDownload() {
+    _ = Task {
+      await downloadUIImage()
+    }
+  }
+
+  func downloadUIImage() async {
+    do {
+        if let image = try await FileOps.downloadImage(from: url) {
+          print("Download uiimage ok")
+          downloadesUIImage = image
+          downloadedUIImageState = true
+        }
+    } catch {
+      print("Error downloaded imgae")
+      downloadedUIImageState = false
+    }
+  }
+
+  func setForFix() {
+    if let userId = Utils.getUserId()  {
+      observer.fixModel = FixModel(requestId: UUID().uuidString, userId: userId, originalImage: downloadesUIImage, baseImage: downloadesUIImage, prompt: prompt)
+      observer.fixAction = .fixFinished
+      observer.currentPath = .fix
+    }
+  }
 
   func setDownloadImage(image: Image) {
     downloalImage = image
@@ -51,8 +79,6 @@ struct SavedPromptDetail: View {
 
         Spacer().frame(width: 10, height: 30)
 
-        Text("Document ID : \(docId)")
-
         HStack{
           Spacer()
           Button(action: {
@@ -62,6 +88,7 @@ struct SavedPromptDetail: View {
               .foregroundColor(Color.basicText)
               .font(Font.system(size: 30, weight: .regular))
           }
+
           Spacer().frame(width: 10, height: 10)
         }
 
@@ -85,6 +112,16 @@ struct SavedPromptDetail: View {
             LoadingImageProgressSaved()
           }
         }
+
+        Spacer().frame(width: 10, height: 30)
+
+
+        Button(action: {
+          setForFix()
+        }) {
+          ButtonDefaultShape(buttonType: .gotoFix)
+        }
+          .opacity(downloadedUIImageState ? 1 : 0.5)
 
         if showDownload {
 
@@ -161,8 +198,9 @@ struct SavedPromptDetail: View {
       }
     }.onAppear{
       print("appear \(url)")
+      startDownload()
     }.confirmationDialog("Delete Prompt ?", isPresented: $showDeleteSheet, titleVisibility: .visible) {
-      Button("keyYes") {
+      Button("Yes") {
        deletePrompt()
       }
     }

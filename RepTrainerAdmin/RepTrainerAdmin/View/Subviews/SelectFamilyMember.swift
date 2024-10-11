@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FamilyMember: Identifiable, Hashable {
+struct PromptOption: Identifiable, Hashable {
   let id = UUID()
   var type: String
   var age: String? // Age is now optional and represented as a String for text input
@@ -15,23 +15,23 @@ struct FamilyMember: Identifiable, Hashable {
 
 struct SelectFamilyMember: View {
   @EnvironmentObject var observer: ObserverModel
-  @State private var selectedFamilyMembers: [FamilyMember] = [] // Store selected family members
+  @State private var selectedPromptOption: [PromptOption] = [] // Store selected family members
 
   // Predefined family member types
-  let familyOptions = ["Father", "Mother", "Son", "Daughter", "Grandfather", "Grandmother"]
-  @State private var familyDesc: String = "My family consists of ..."
+  let familyOptions = ["Girl", "Boy"]
+  @State private var familyDesc: String = ""
 
-  func createFamilyDescription(from familyMembers: [FamilyMember]) {
+  func createFamilyDescription(from promptOption: [PromptOption]) {
 
-    if familyMembers.isEmpty {
+    if promptOption.isEmpty {
       return
     }
 
     var descriptions: [String] = []
 
-    for member in familyMembers {
+    for member in promptOption {
       if let age = member.age, !age.isEmpty {
-        descriptions.append("a \(member.type.lowercased()) (\(age))")
+        descriptions.append("A \(age)-year-old \(member.type.lowercased())")
       } else {
         descriptions.append("a \(member.type.lowercased())")
       }
@@ -39,8 +39,17 @@ struct SelectFamilyMember: View {
 
     let familyDescription = descriptions.joined(separator: ", ").replacingOccurrences(of: ",([^,]*)$", with: " and$1", options: .regularExpression)
 
-    let totalMembers = familyMembers.count
-    observer.newTrainging.promptAddition =  "The family includes \(familyDescription). There are \(totalMembers) people in the family."
+    let totalMembers = promptOption.count
+    observer.newTrainging.promptAddition =  "\(familyDescription)"
+
+    /// Make Prompt options
+    observer.newTrainging.promptOptions = [String]()
+
+
+    for member in promptOption {
+      observer.newTrainging.promptOptions.append(member.type.lowercased())
+    }
+
   }
 
   var body: some View {
@@ -53,8 +62,8 @@ struct SelectFamilyMember: View {
         HStack {
           ForEach(familyOptions, id: \.self) { member in
             Button(action: {
-              let newMember = FamilyMember(type: member, age: nil)
-              selectedFamilyMembers.append(newMember)
+              let newMember = PromptOption(type: member, age: nil)
+              selectedPromptOption.append(newMember)
             }) {
               Text(member)
                 .padding()
@@ -69,13 +78,13 @@ struct SelectFamilyMember: View {
 
       Divider().padding()
 
-      if selectedFamilyMembers.isEmpty {
+      if selectedPromptOption.isEmpty {
         Text("No family members selected yet")
           .foregroundColor(.gray)
       } else {
         ScrollView {
           VStack {
-            ForEach(selectedFamilyMembers) { member in
+            ForEach(selectedPromptOption) { member in
               HStack {
                 Text(member.type)
                   .font(.headline)
@@ -85,8 +94,8 @@ struct SelectFamilyMember: View {
                 TextField("Enter age (optional)", text: Binding(
                   get: { member.age ?? "" },
                   set: { newValue in
-                    if let index = selectedFamilyMembers.firstIndex(of: member) {
-                      selectedFamilyMembers[index].age = newValue
+                    if let index = selectedPromptOption.firstIndex(of: member) {
+                      selectedPromptOption[index].age = newValue
                     }
                   }
                 ))
@@ -96,8 +105,8 @@ struct SelectFamilyMember: View {
 
                 Button(action: {
                   // Remove the family member
-                  if let index = selectedFamilyMembers.firstIndex(of: member) {
-                    selectedFamilyMembers.remove(at: index)
+                  if let index = selectedPromptOption.firstIndex(of: member) {
+                    selectedPromptOption.remove(at: index)
                   }
                 }) {
                   Image(systemName: "trash")
@@ -110,22 +119,27 @@ struct SelectFamilyMember: View {
             }
           }
           .padding()
-        }.onChange(of: selectedFamilyMembers) { oldState, newState in
+        }.onChange(of: selectedPromptOption) { oldState, newState in
 
-          createFamilyDescription(from: selectedFamilyMembers)
+          createFamilyDescription(from: selectedPromptOption)
         }
       }
 
       Spacer()
 
-      Text(familyDesc);
-        
+      Text(observer.newTrainging.promptAddition);
+
+      ForEach(observer.newTrainging.promptOptions, id: \.self) { option in
+        Text(option)
+      }
+
+
       // Submit button
       Button(action: {
         // Submit selected family members
         observer.uploadZipToStartTraining()
         
-        print("Family submitted: \(selectedFamilyMembers)")
+        print("Family submitted: \(selectedPromptOption)")
       }) {
         Text("Submit Family")
           .padding()

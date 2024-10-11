@@ -11,11 +11,13 @@ struct RunDemoModel: View {
   @EnvironmentObject var observer: ObserverModel
   @State private var demoModelDict: [String: String] = [:]
   @State private var selectedModel: String = ""
-  @State private var isLoading = true
+  @State private var isLoading = false
   @State private var isProccessPrediction = false
   @State private var selectedOptions: [String] = []
 
   func loadDemoModels() {
+    self.isLoading = true
+
     observer.getDemoModels(type: observer.trainerType.rawValue, completion: { (success, demoModels) in
       guard success, let demoModels = demoModels else {
         demoModelDict = [:]
@@ -93,34 +95,38 @@ struct RunDemoModel: View {
           TrainerTypePicker()
         }.padding(.horizontal, 20)
 
+        Spacer().frame(width: 10, height: 30)
+        
         HStack{
           SmallButtonNoBackground(text: "Demo Model", icon: "rectangle.portrait.and.arrow.forward.fill")
           Spacer()
 
-          Picker("Select a Model", selection: $observer.selectedDemoModel) {
-            if isLoading {
-              Text("Loading...").tag(nil as String?)
-            } else {
-              ForEach(observer.selectedDemoModelList, id: \.self) { model in
-                Text(model.desc).tag(model.modelName)
-                  .font(Font.system(size: 14, weight: .regular))
+          if !isLoading {
+            Picker("Select a Model", selection: $observer.selectedDemoModel) {
+              if isLoading {
+                Text("Loading...").tag(nil as String?)
+              } else {
+                ForEach(observer.selectedDemoModelList, id: \.self) { model in
+                  Text(model.desc).tag(model.modelName)
+                    .font(Font.system(size: 14, weight: .regular))
+                }
               }
-            }
 
-          }.disabled(isLoading)
-            .pickerStyle(MenuPickerStyle())  // Display as a dropdown menu
-            .tint(.basicText)
-            .onChange(of: observer.trainerType) { oldState, newState in
-              // Call action function
-              print("Trainer Tyoe is now \(observer.trainerType)")
-              isLoading = true
-              loadDemoModels()
             }
-            .onAppear{
-              loadDemoModels()
-            }
+              .pickerStyle(MenuPickerStyle())  // Display as a dropdown menu
+              .tint(.basicText)
+              .onChange(of: observer.trainerType) { oldState, newState in
+                print("Trainer Tyoe is now \(observer.trainerType)")
+                isLoading = true
+                loadDemoModels()
+              }
+
+          }
         }.padding(.horizontal, 20)
       }.background(Color(UIColor.secondarySystemBackground))
+        .onAppear{
+          loadDemoModels()
+        }
 
       Spacer().frame(width: 10, height: 40)
 
@@ -136,12 +142,27 @@ struct RunDemoModel: View {
       }
 
       Spacer().frame(width: 10, height: 30)
+
       BubblePromptView(image: Image(uiImage: observer.fixModel.fixedimage ?? UIImage()))
+        .frame(height:  UIScreen.main.bounds.size.width - 10)
+        .background(Color.green)
       Spacer().frame(width: 10, height: 50)
 
       // MARK: Save
 
       VStack{
+
+        HStack{
+          Button(action: {
+            getDemoModelToRun()
+          }) {
+            SmallButtonNoBackground(text: "Run Demo Model Now (\(observer.selectedDemoModel.desc))", icon: "play")
+          }
+          if observer.isLoading {
+            ProgressView()
+          }
+        }
+
         Spacer().frame(width: 10, height: 10)
         Text("Save Prompt for type: \(observer.trainerType.rawValue)")
           .multilineTextAlignment(.leading)
@@ -149,6 +170,7 @@ struct RunDemoModel: View {
           .font(.body.bold())
           .foregroundColor(Color.basicText)
         Spacer().frame(width: 10, height: 20)
+
         ScrollView(.horizontal, showsIndicators: false) {
           HStack {
             Spacer().frame(width: 10, height: 20)

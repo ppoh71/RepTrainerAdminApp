@@ -62,12 +62,12 @@ struct CreatedPrompt: Codable, Hashable {
     }
     return nil
   }
-
 }
 
 struct NewTrainingModel: Codable {
   var modelName: String = ""
   var promptAddition: String = ""
+  var promptOptions: [String] = [String]()
   var zipURL: String = ""
   var userId: String = ""
   var traingingType: String = ""

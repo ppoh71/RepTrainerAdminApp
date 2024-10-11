@@ -72,6 +72,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		A94C841C2CAB3F17007DD887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A955A0BD2C9CDA8400C91415 /* SavedPrompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPrompts.swift; sourceTree = "<group>"; };
 		A955A0BF2C9CE66300C91415 /* SavedPromptDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPromptDetail.swift; sourceTree = "<group>"; };
 		A955A0C12C9E198D00C91415 /* CreateTrainging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTrainging.swift; sourceTree = "<group>"; };
@@ -169,6 +170,7 @@
 		A9CD65AE2C9ADB5D007F91D3 /* RepTrainerAdmin */ = {
 			isa = PBXGroup;
 			children = (
+				A94C841C2CAB3F17007DD887 /* Info.plist */,
 				A9CD65E42C9ADBE8007F91D3 /* View */,
 				A9CD65CB2C9ADBE8007F91D3 /* Model */,
 				A9CD65EC2C9ADBE8007F91D3 /* Observer */,
@@ -550,8 +552,11 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RepTrainerAdmin/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = RepTYrainerAdmin;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "Please saving photos to your Media Library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Please allow Photo Library usage";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -592,8 +597,11 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RepTrainerAdmin/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = RepTYrainerAdmin;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "Please saving photos to your Media Library";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Please allow Photo Library usage";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
