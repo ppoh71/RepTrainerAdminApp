@@ -87,6 +87,7 @@ enum ButtonType {
   case next
   case savePrompt
   case gotoFix
+  case promptInput
 }
 
 struct ButtonDefaultShape: View {
@@ -119,6 +120,8 @@ struct ButtonDefaultShape: View {
       return ("arrow.down.square", "Save Prompt")
     case .gotoFix:
       return ("arrow.left", "Goto Fix")
+    case .promptInput:
+      return ("arrow.left", "Prompt Input only")
     }
   }
 

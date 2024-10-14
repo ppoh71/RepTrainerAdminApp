@@ -16,7 +16,7 @@ struct SavedPromptsView: View {
   @State private var showDetailSheet: Bool = false
   @State private var detailUrl: URL = URL(string: "https://apple.com")!
   @State private var fixPrompt: String = ""
-  @State private var docId: String = "test"
+  @State private var requestId: String = ""
   @State private var options: [String] = [String]()
   @State private var isEditingOrder: Bool = false
   @State private var selectedOptions: [String] = []
@@ -129,7 +129,7 @@ struct SavedPromptsView: View {
                     if let url =  URL(string: prompt.imageURL) {
                       print("url ok ")
 
-                      docId = prompt.id
+                      requestId = prompt.id
                       detailUrl = url
                       fixPrompt = prompt.prompt
                       options = prompt.options ?? ["No options"]
@@ -167,7 +167,7 @@ struct SavedPromptsView: View {
     .navigationBarTitle("Saved Photo Copies", displayMode: .inline)
 
     .sheet(isPresented: $showDetailSheet) {
-      SavedPromptDetail(showNavigationSheet: $showDetailSheet, url: $detailUrl, prompt: $fixPrompt, docId: $docId, options: $options )
+      SavedPromptDetail(showNavigationSheet: $showDetailSheet, url: $detailUrl, prompt: $fixPrompt, options: $options, requestId: $requestId )
         .presentationDetents([.large])
     }
   }

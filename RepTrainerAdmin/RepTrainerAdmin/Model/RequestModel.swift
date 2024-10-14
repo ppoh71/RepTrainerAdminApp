@@ -18,6 +18,12 @@ struct RequestReplicateImagetModel: Codable {
   var model: String
   let image: String
   var prompt: String
+  var options: [String]
+  var promptAddition: String
+}
+
+struct RequestReplicatePromptOnlyModel: Codable {
+  var prompt: String
 }
 
 struct DemoModels: Codable {

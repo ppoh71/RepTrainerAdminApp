@@ -41,7 +41,7 @@ class ObserverModel: ObservableObject {
   @Published var selectedDemoModelList: [SelectedDemoModel] = [SelectedDemoModel]()
   @Published var selectedDemoModel: SelectedDemoModel = SelectedDemoModel(id: UUID(), desc: "", modelName: "")
   @Published var createdPromptsList: [CreatedPrompt] = []
-
+  @Published var selectedOptions: [String] = []
   /// Purchase
   @Published var showPaywall: Bool = false
   @Published var purchasePrice: String = "€7,99"
@@ -141,24 +141,25 @@ extension ObserverModel {
     let requestId = UUID().uuidString
     let newFixModel = FixModel(requestId: requestId, userId: userId, originalImage: originalImage, prompt: "")
     fixModel = newFixModel
+    selectedOptions = []
   }
 
   func startNewRequest() {
     networkTaskGetImagePrompt?.cancel()
     fixAction = .none
+    self.selectedOptions = []
     self.fixModel = FixModel(requestId: "", userId: "", originalImage: UIImage(), fixedimage: UIImage(), fixedUrl: "", prompt: "")
   }
 
   func startRequest() {
     guard !fixModel.requestId.isEmpty && !fixModel.userId.isEmpty else { return }
+    selectedOptions = []
 
-    self.fixAction = .fixInProgress
+    fixAction = .fixInProgress
     triggerHapticFeedback()
 
     /// create and start the copy request
-    DispatchQueue.global(qos: .background).async {
-
-      if let resizedImage = FileOps.resizeImage(image: self.fixModel.originalImage, maxPixelSize: 1024), let jpegData = resizedImage.jpegData(compressionQuality: 0.85) {
+      if let resizedImage = FileOps.resizeImage(image: self.fixModel.originalImage, maxPixelSize: 1600), let jpegData = resizedImage.jpegData(compressionQuality: 0.85) {
         let mimeType = "image/jpeg"
         let imageString = jpegData.uriEncoded(mimeType: mimeType)
         let newRequest = RequestImagePromptModel(userId:  self.fixModel.userId, requestId: self.fixModel.requestId, image: imageString, prompt: self.textPrompt)
@@ -169,12 +170,24 @@ extension ObserverModel {
       } else {
         self.fixAction = .fixTimeOut
       }
+  }
 
-    }
+  func startNewPromptRequest(prompt: String) {
+    networkTaskGetImagePrompt?.cancel()
+
+    self.fixAction = .fixInProgress
+    
+    guard let userId = Utils.getUserId() else { return }
+    let requestId = UUID().uuidString
+    let newFixModel = FixModel(requestId: requestId, userId: userId, originalImage: UIImage(), prompt: prompt)
+    fixModel = newFixModel
+    self.currentPath = .fix
+    self.selectedOptions = []
+    startBaseImageFromPromptGeneration()
   }
 
   /// Create replicate request, resize the original image, get image datd and write uriExcnode for the request
-  func requestResponseModel(image: UIImage, model: String, prompt: String) -> RequestReplicateImagetModel? {
+  func requestResponseModel(image: UIImage, model: String, prompt: String, options: [String], promtpAddition: String) -> RequestReplicateImagetModel? {
 
     // handel image
     guard let resizedImage = FileOps.resizeImage(image: image, maxPixelSize: 1200) else {return nil}
@@ -182,7 +195,7 @@ extension ObserverModel {
     let mimeType = "image/jpeg"
     let imageString = jpegData.uriEncoded(mimeType: mimeType)
 
-    let newRequest = RequestReplicateImagetModel(model: model, image: imageString, prompt: prompt)
+    let newRequest = RequestReplicateImagetModel(model: model, image: imageString, prompt: prompt, options: options, promptAddition: promtpAddition)
     return newRequest
   }
 

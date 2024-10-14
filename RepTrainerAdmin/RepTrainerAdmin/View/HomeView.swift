@@ -67,7 +67,8 @@ struct HomeView: View {
 struct HomeContent: View {
   @EnvironmentObject var observer: ObserverModel
   @Environment(\.colorScheme) var colorScheme
-
+  @State private var showPromtpInputSheet: Bool = false
+  
   @State var showingOptions: Bool = false
 
   let bubleLoop: [BubbleLoop] = [
@@ -122,6 +123,14 @@ struct HomeContent: View {
 
           }
 
+        Spacer().frame(width: 10, height: 30)
+
+        Button(action: {
+          showPromtpInputSheet = true
+        }) {
+          ButtonDefaultShape(buttonType: .promptInput)
+        }
+        
         Spacer().frame(height: 60)
 
         HStack{
@@ -155,6 +164,11 @@ struct HomeContent: View {
       }.frame(alignment: .center)
         .navigationBarTitle("", displayMode: .inline)
         .edgesIgnoringSafeArea(.all)
+
+        .sheet(isPresented: $showPromtpInputSheet) {
+          PromptInput(showPromtpInputSheet: $showPromtpInputSheet)
+            .presentationDetents([.large])
+        }
     }
 
 

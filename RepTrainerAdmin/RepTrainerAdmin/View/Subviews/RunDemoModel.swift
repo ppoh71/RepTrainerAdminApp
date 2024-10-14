@@ -13,7 +13,7 @@ struct RunDemoModel: View {
   @State private var selectedModel: String = ""
   @State private var isLoading = false
   @State private var isProccessPrediction = false
-  @State private var selectedOptions: [String] = []
+
 
   func loadDemoModels() {
     self.isLoading = true
@@ -52,16 +52,17 @@ struct RunDemoModel: View {
       print("Gort demo Model:")
       print(demoModelToRun)
 
-      let finalPrompt = observer.fixModel.getFinalPrompt(withTrigger: demoModelToRun.trigger, andAddition: demoModelToRun.promptAddition)
+     // let finalPrompt = observer.fixModel.getFinalPrompt(withTrigger: demoModelToRun.trigger, andAddition: demoModelToRun.promptAddition)
 
       guard  let baseImage = observer.fixModel.baseImage else { print("No base image"); return}
-      observer.startIDemoImageGeneration(model: observer.selectedDemoModel.modelName, prompt: finalPrompt, image: baseImage)
+
+      observer.startIDemoImageGeneration(model: observer.selectedDemoModel.modelName, prompt: observer.fixModel.prompt, image: baseImage, options: observer.selectedOptions, promptAddition: demoModelToRun.promptAddition)
     })
   }
 
   func savePrompt() {
     if let image = observer.fixModel.baseImage {
-      FirebaseService.createPromptWithImage(db: observer.db, type: observer.trainerType.rawValue, image: image, prompt: observer.fixModel.prompt, desc: "Some Description", options: selectedOptions, sortOrder: 1 ) { result in
+      FirebaseService.createPromptWithImage(db: observer.db, type: observer.trainerType.rawValue, image: image, prompt: observer.fixModel.prompt, desc: "Some Description", options: observer.selectedOptions, sortOrder: 1 ) { result in
         switch result {
         case .success(_):
           print("Success Prompt saved")
@@ -72,16 +73,17 @@ struct RunDemoModel: View {
     }
   }
 
+
   func toggleOption(_ option: PromptOptions) {
-    if let index = selectedOptions.firstIndex(of: option.rawValue) {
-      selectedOptions.remove(at: index)  // Remove if already selected
+    if let index = observer.selectedOptions.firstIndex(of: option.rawValue) {
+      observer.selectedOptions.remove(at: index)  // Remove if already selected
     } else {
-      selectedOptions.append(option.rawValue)  // Add if not selected
+      observer.selectedOptions.append(option.rawValue)  // Add if not selected
     }
   }
 
   func isSelected(_ option: PromptOptions) -> Bool {
-    selectedOptions.contains(option.rawValue)
+    observer.selectedOptions.contains(option.rawValue)
   }
 
   var body: some View {
@@ -145,7 +147,7 @@ struct RunDemoModel: View {
 
       BubblePromptView(image: Image(uiImage: observer.fixModel.fixedimage ?? UIImage()))
         .frame(height:  UIScreen.main.bounds.size.width - 10)
-        .background(Color.green)
+
       Spacer().frame(width: 10, height: 50)
 
       // MARK: Save
@@ -163,7 +165,7 @@ struct RunDemoModel: View {
           }
         }
 
-        Spacer().frame(width: 10, height: 10)
+        Spacer().frame(width: 10, height: 30)
         Text("Save Prompt for type: \(observer.trainerType.rawValue)")
           .multilineTextAlignment(.leading)
           .fixedSize(horizontal: false, vertical: true)

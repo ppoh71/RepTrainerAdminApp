@@ -31,9 +31,13 @@ struct DemoModelToRun: Codable {
 }
 
 enum PromptOptions: String, CaseIterable, Identifiable {
+  case noimg2img = "noimg2img"
   case boys = "boys"
   case girls = "girls"
   case allGender = "baby"
+  case photoshooting = "photoshooting"
+  case cartoon = "cartoon"
+  case birthday = "birthday"
   case western = "western"
   case easter = "eastern"
   case middelEast = "middleEast"

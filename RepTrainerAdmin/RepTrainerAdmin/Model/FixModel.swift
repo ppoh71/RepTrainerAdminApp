@@ -116,6 +116,7 @@ struct FixModel{
   
 
   func getFinalPrompt( withTrigger trigger: String, andAddition addition: String) -> String {
+
     let replacedText = self.prompt
       .replacingOccurrences(of: "###trigger###", with: trigger)
       .replacingOccurrences(of: "###addition###", with: addition)

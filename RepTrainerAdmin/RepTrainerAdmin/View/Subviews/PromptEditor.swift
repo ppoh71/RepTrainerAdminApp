@@ -9,7 +9,8 @@ import SwiftUI
 
 struct PromptEditor: View {
   @EnvironmentObject var observer: ObserverModel
-  
+  @Binding var showPromtpEditorSheet: Bool
+
   @Binding var text: String  // Binding to the text in parent
   @State private var selectedRange: NSRange = NSRange(location: 0, length: 0)  // Tracks cursor range
   @FocusState private var isTextFieldFocused: Bool  // Focus state for the text editor
@@ -17,17 +18,29 @@ struct PromptEditor: View {
 
   var body: some View {
     VStack {
-      if isTextFieldFocused {
+
         HStack{
-          Spacer().frame(width: 120, height: 30)
+          Spacer().frame(width: 30, height: 30)
+          
           Button(action: {
             isTextFieldFocused = false
           }) {
             SmallButtonNoBackground(text: "Close keyboard", icon: "keyboard")
-          }
+          }.opacity(isTextFieldFocused ? 1 : 0.3)
+
           Spacer()
+
+          Button(action: {
+            showPromtpEditorSheet = false
+          }) {
+            Image(systemName: "xmark.circle")
+              .foregroundColor(Color.white)
+              .font(Font.system(size: 30, weight: .regular))
+          }
+
+          Spacer().frame(width: 30, height: 30)
         }
-      }
+
 
       Spacer().frame(width: 120, height: 60)
 
@@ -45,30 +58,24 @@ struct PromptEditor: View {
         }) {
           SmallButtonNoBackground(text: "Add addition", icon: "text.insert")
         }
+
+        Spacer()
+
+        Button(action: {
+          insertTextAtCursor(" ###age### ")
+        }) {
+          SmallButtonNoBackground(text: "Add age", icon: "text.insert")
+        }
+
       }.padding(.horizontal, 20)
 
       // Custom TextEditor with cursor management
       CustomTextView(text: $text, selectedRange: $selectedRange)
         .focused($isTextFieldFocused)
         .padding(.horizontal, 20)
-        .toolbar {
-          ToolbarItemGroup(placement: .keyboard) {
+        .border(.basicText)
+        .cornerRadius(3)
 
-            HStack{
-              Spacer()
-
-
-              Spacer()
-              Spacer()
-              Button(action: {
-                isTextFieldFocused = false
-              }) {
-               Text("close")
-              }
-
-            }
-          }
-        }
         Spacer().frame(width: 10, height: 40)
     }
 
@@ -117,5 +124,5 @@ struct PromptEditor: View {
 
 
 #Preview {
-  PromptEditor(text: .constant("A cascading waterfall over moss-covered rocks. The water flows smoothly and rapidly, creating a serene yet powerful scene. The background is a natural rocky terrain. The rocks are coated with vibrant green moss, contrasting with the grey and black tones of the wet rocks. The image is captured with a close-up angle, focusing on the details of the water splashing over the rocks. Lighting is natural, highlighting the texture of the moss and the movement of the water. The style is realistic and nature-focused, capturing the essence of a tranquil waterfall in the wilderness.")).environmentObject(ObserverModel())
+  PromptEditor(showPromtpEditorSheet: .constant(true), text: .constant("A cascading waterfall over moss-covered rocks. The water flows smoothly and rapidly, creating a serene yet powerful scene. The background is a natural rocky terrain. The rocks are coated with vibrant green moss, contrasting with the grey and black tones of the wet rocks. The image is captured with a close-up angle, focusing on the details of the water splashing over the rocks. Lighting is natural, highlighting the texture of the moss and the movement of the water. The style is realistic and nature-focused, capturing the essence of a tranquil waterfall in the wilderness.")).environmentObject(ObserverModel())
 }

@@ -247,6 +247,30 @@ final class FirebaseService {
     }
   }
 
+  class func updatePromptAndOptions(db: Firestore?, documentID: String, type: String, newPrompt: String, newOptions: [String], completion: @escaping (Error?) -> Void) {
+    guard let db = db else {
+      print("Firestore database reference is nil")
+      return
+    }
+
+    // Reference to the document based on its ID and type
+    let docRef = db.collection("prompts").document(type).collection("prompt").document(documentID)
+
+    // Update the 'prompt' and 'options' fields
+    docRef.updateData([
+      "prompt": newPrompt,
+      "options": newOptions
+    ]) { error in
+      if let error = error {
+        print("Failed to update prompt and options: \(error.localizedDescription)")
+        completion(error)
+      } else {
+        print("Prompt and options updated successfully")
+        completion(nil)
+      }
+    }
+  }
+
   class func updateSortOrderForPrompt(db: Firestore?, documentID: String, type: String, newOrder: Int) {
     guard let db = db else {print("G. get tut"); return }
 

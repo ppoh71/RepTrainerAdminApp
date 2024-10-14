@@ -106,7 +106,7 @@ struct BubbleReadyView: View {
           .clipShape(Circle())
           .offset(x:0, y: -0)
           .background(ProgressView())
-    }.background(Color.red)
+    }
   }
 }
 
@@ -125,7 +125,7 @@ struct BubblePromptView: View {
         .frame(width: UIScreen.main.bounds.size.width - imagePadding, height: UIScreen.main.bounds.size.width - imagePadding )
         .clipShape(Circle())
 
-    }.background(Color.red)
+    }
   }
 }
 

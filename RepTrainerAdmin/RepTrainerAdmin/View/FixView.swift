@@ -64,6 +64,7 @@ struct FixView: View {
 
 struct FixViewProgressStart: View {
   @EnvironmentObject var observer: ObserverModel
+  @State private var showPromtpInputSheet: Bool = false
 
   var body: some View {
     VStack{
@@ -91,6 +92,18 @@ struct FixViewProgressStart: View {
                    photoLibrary: .shared()) {
         ButtonDefaultShape(buttonType: .addPhotos)
       }
+
+      Spacer().frame(width: 10, height: 30)
+
+      Button(action: {
+        showPromtpInputSheet = true
+      }) {
+        ButtonDefaultShape(buttonType: .promptInput)
+      }
+
+    } .sheet(isPresented: $showPromtpInputSheet) {
+      PromptInput(showPromtpInputSheet: $showPromtpInputSheet)
+        .presentationDetents([.large])
     }
   }
 }
@@ -156,6 +169,7 @@ struct FixViewProgressReady: View {
   @EnvironmentObject var observer: ObserverModel
   @State private var showCopiedText: Bool = false
   @State private var showPromtpEditorSheet: Bool = false
+  @State private var showPromtpInputSheet: Bool = false
 
   func getImage() -> Image {
     if let image = observer.fixModel.fixedimage {
@@ -174,12 +188,21 @@ struct FixViewProgressReady: View {
         Spacer().frame(width: 10, height: 20)
 
         HStack{
+          Spacer().frame(width: 30, height: 10)
+
+          Button(action: {
+            showPromtpInputSheet = true
+          }) {
+            SmallButton(text: "New from Prompt", icon: "photo.on.rectangle.angled")
+          }
+
           Spacer()
+
           PhotosPicker(selection: $observer.imageSelection,
                        matching: .images,
                        photoLibrary: .shared()) {
-            SmallButton(text: "New Prompt", icon: "photo.on.rectangle.angled")
-              .scaleEffect(1.3)
+            SmallButton(text: "New from Image", icon: "photo.on.rectangle.angled")
+
           }
           Spacer().frame(width: 30, height: 10)
         }
@@ -189,7 +212,6 @@ struct FixViewProgressReady: View {
         BubbleReadyView(cloneImage: Image(uiImage:  observer.fixModel.baseImage ?? UIImage()), originalImage: Image(uiImage:  observer.fixModel.originalImage))
           .frame(height:  UIScreen.main.bounds.size.width + 120)
           .clipped()
-          .background(Color.green)
 
         Spacer().frame(width: 10, height: 20)
 
@@ -225,14 +247,18 @@ struct FixViewProgressReady: View {
       }
       Spacer().frame(width: 10, height: 30)
 
-
-
       Spacer().frame(width: 10, height: 130)
     }
     .sheet(isPresented: $showPromtpEditorSheet) {
-      PromptEditor(text:  $observer.fixModel.prompt)
+      PromptEditor(showPromtpEditorSheet: $showPromtpEditorSheet, text:  $observer.fixModel.prompt)
         .presentationDetents([.large])
     }
+
+    .sheet(isPresented: $showPromtpInputSheet) {
+      PromptInput(showPromtpInputSheet: $showPromtpInputSheet)
+        .presentationDetents([.large])
+    }
+
   }
 }
 
