@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A95283112CBAB6F300851A9F /* PromptInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95283102CBAB6F300851A9F /* PromptInput.swift */; };
+		A95283172CBDD1F600851A9F /* MaskPainterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A95283162CBDD1F600851A9F /* MaskPainterView.swift */; };
 		A955A0BE2C9CDA8400C91415 /* SavedPrompts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A955A0BD2C9CDA8400C91415 /* SavedPrompts.swift */; };
 		A955A0C02C9CE66300C91415 /* SavedPromptDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = A955A0BF2C9CE66300C91415 /* SavedPromptDetail.swift */; };
 		A955A0C22C9E198D00C91415 /* CreateTrainging.swift in Sources */ = {isa = PBXBuildFile; fileRef = A955A0C12C9E198D00C91415 /* CreateTrainging.swift */; };
@@ -75,6 +76,7 @@
 /* Begin PBXFileReference section */
 		A94C841C2CAB3F17007DD887 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A95283102CBAB6F300851A9F /* PromptInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromptInput.swift; sourceTree = "<group>"; };
+		A95283162CBDD1F600851A9F /* MaskPainterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskPainterView.swift; sourceTree = "<group>"; };
 		A955A0BD2C9CDA8400C91415 /* SavedPrompts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPrompts.swift; sourceTree = "<group>"; };
 		A955A0BF2C9CE66300C91415 /* SavedPromptDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPromptDetail.swift; sourceTree = "<group>"; };
 		A955A0C12C9E198D00C91415 /* CreateTrainging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTrainging.swift; sourceTree = "<group>"; };
@@ -243,6 +245,7 @@
 				A9CD65DA2C9ADBE8007F91D3 /* ZoomForScreenshots.swift */,
 				A9CD65DB2C9ADBE8007F91D3 /* ZoomView.swift */,
 				A95283102CBAB6F300851A9F /* PromptInput.swift */,
+				A95283162CBDD1F600851A9F /* MaskPainterView.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -400,6 +403,7 @@
 				A9CD65B02C9ADB5D007F91D3 /* RepTrainerAdminApp.swift in Sources */,
 				A9CD65F22C9ADBE8007F91D3 /* PhotoPicker.swift in Sources */,
 				A9CD65ED2C9ADBE8007F91D3 /* CustomTextView.swift in Sources */,
+				A95283172CBDD1F600851A9F /* MaskPainterView.swift in Sources */,
 				A9CD66012C9ADBE8007F91D3 /* InPogressText.swift in Sources */,
 				A955A0C22C9E198D00C91415 /* CreateTrainging.swift in Sources */,
 				A9CD65FD2C9ADBE8007F91D3 /* FixItem.swift in Sources */,

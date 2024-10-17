@@ -20,6 +20,7 @@ struct RequestReplicateImagetModel: Codable {
   var prompt: String
   var options: [String]
   var promptAddition: String
+  var maskUrlString: String
 }
 
 struct RequestReplicatePromptOnlyModel: Codable {

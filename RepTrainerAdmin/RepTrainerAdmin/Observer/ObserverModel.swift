@@ -42,6 +42,8 @@ class ObserverModel: ObservableObject {
   @Published var selectedDemoModel: SelectedDemoModel = SelectedDemoModel(id: UUID(), desc: "", modelName: "")
   @Published var createdPromptsList: [CreatedPrompt] = []
   @Published var selectedOptions: [String] = []
+  @Published var hasMaskUrlString: String = ""
+
   /// Purchase
   @Published var showPaywall: Bool = false
   @Published var purchasePrice: String = "€7,99"
@@ -195,7 +197,7 @@ extension ObserverModel {
     let mimeType = "image/jpeg"
     let imageString = jpegData.uriEncoded(mimeType: mimeType)
 
-    let newRequest = RequestReplicateImagetModel(model: model, image: imageString, prompt: prompt, options: options, promptAddition: promtpAddition)
+    let newRequest = RequestReplicateImagetModel(model: model, image: imageString, prompt: prompt, options: options, promptAddition: promtpAddition, maskUrlString: self.hasMaskUrlString)
     return newRequest
   }
 

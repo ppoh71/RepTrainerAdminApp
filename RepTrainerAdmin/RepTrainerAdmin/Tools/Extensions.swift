@@ -17,6 +17,22 @@ extension String {
   func fileExtension() -> String {
     return NSURL(fileURLWithPath: self).pathExtension ?? ""
   }
+
+  func extractFileName() -> String? {
+    // Decode the URL-encoded string (replace %2F with "/")
+    let decodedString = self.replacingOccurrences(of: "%2F", with: "/")
+
+    // Split the decoded string by '/' and get the last component, then remove query parameters
+    guard let fileNameWithParams = decodedString.split(separator: "/").last else {
+      return nil
+    }
+
+    // Remove query parameters like ?alt=media&token=...
+    let fileName = fileNameWithParams.split(separator: "?").first
+
+    return fileName.map { String($0) }
+  }
+
 }
 
 // MARK: Extension URL

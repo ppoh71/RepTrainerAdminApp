@@ -231,6 +231,9 @@ extension ObserverModel {
   func generateDemoImageRequest(model: String, prompt: String, image: UIImage, options: [String], promptAddition: String ) async {
     networkTaskGetImage?.cancel()
 
+
+    
+
     /// cretae response model to post
     let requestModel = requestResponseModel(image: image, model: model, prompt: prompt, options: options, promtpAddition: promptAddition)
 

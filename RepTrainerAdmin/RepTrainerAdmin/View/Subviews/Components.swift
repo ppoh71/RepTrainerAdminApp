@@ -88,6 +88,10 @@ enum ButtonType {
   case savePrompt
   case gotoFix
   case promptInput
+  case createMask
+  case setAsPromptDemo
+  case update
+  case resaveImages
 }
 
 struct ButtonDefaultShape: View {
@@ -122,6 +126,14 @@ struct ButtonDefaultShape: View {
       return ("arrow.left", "Goto Fix")
     case .promptInput:
       return ("arrow.left", "Prompt Input only")
+    case .createMask:
+      return ("theatermasks", "Create Mask")
+    case .setAsPromptDemo:
+      return ("arrow.left", "Set for Prompt")
+    case .update:
+      return ("arrow.left", "Update")
+    case .resaveImages:
+      return ("photo", "Resave (x1024) image")
     }
   }
 

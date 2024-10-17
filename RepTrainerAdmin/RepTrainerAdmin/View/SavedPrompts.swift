@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct SavedPromptsView: View {
   @EnvironmentObject var observer: ObserverModel
   private static let initialColumns = 3
@@ -58,7 +57,6 @@ struct SavedPromptsView: View {
   var body: some View {
 
     VStack{
-
       HStack{
         ScrollView(.horizontal, showsIndicators: false) {
           HStack {
@@ -78,17 +76,15 @@ struct SavedPromptsView: View {
             Spacer().frame(width: 10, height: 20)
           }
         }
-
-        Button(action: {
-          isEditingOrder.toggle()
-        }) {
-          Text(isEditingOrder ? "Done Editing" : "Edit Order")
-            .padding()
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(8)
-        }
-
+//        Button(action: {
+//          isEditingOrder.toggle()
+//        }) {
+//          Text(isEditingOrder ? "Done Editing" : "Edit Order")
+//            .padding()
+//            .background(Color.blue)
+//            .foregroundColor(.white)
+//            .cornerRadius(8)
+//        }
       }
 
       Spacer().frame(width: 10, height: 60)
@@ -106,7 +102,6 @@ struct SavedPromptsView: View {
                 .foregroundColor(Color.basicText)
                 .font(Font.system(size: 20, weight: .regular))
             }
-
           }
           .onMove(perform: { indices, newOffset in
             moveItemAndUpdateFirestore(fromOffsets: indices, toOffset: newOffset)
@@ -117,12 +112,8 @@ struct SavedPromptsView: View {
       if !isEditingOrder {
         ScrollView(Axis.Set.vertical, showsIndicators: false) {
           LazyVGrid(columns: [.init(.adaptive(minimum: 100, maximum: .infinity), spacing: 5)] , spacing: 5) {
-
             ForEach( observer.createdPromptsList, id: \.self ) { prompt in
-
               if displayFromPromptOptions(promptOptions: prompt.options) {
-
-                // if prompt.
                 GridItemViewPrompts(prompt: prompt)
                   .onTapGesture {
                     print("doc \(prompt.id)")
@@ -164,7 +155,7 @@ struct SavedPromptsView: View {
     }.onAppear{
       self.observer.getCreatedPrompts()
     }
-    .navigationBarTitle("Saved Photo Copies", displayMode: .inline)
+    .navigationBarTitle("Saved Photo Copies (\(observer.createdPromptsList.count))", displayMode: .inline)
 
     .sheet(isPresented: $showDetailSheet) {
       SavedPromptDetail(showNavigationSheet: $showDetailSheet, url: $detailUrl, prompt: $fixPrompt, options: $options, requestId: $requestId )

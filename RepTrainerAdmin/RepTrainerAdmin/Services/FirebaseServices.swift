@@ -183,12 +183,17 @@ final class FirebaseService {
 
   class func createPromptWithImage(db: Firestore?, type: String, image: UIImage, prompt: String, desc: String, options: [String], sortOrder: Int, completion: @escaping (Result<String, Error>) -> Void) {
     guard let db = db else {print("G. get tut"); return }
-    
-    // Convert UIImage to Data
-    guard let imageData = image.jpegData(compressionQuality: 0.9) else {
-      print("Failed to convert UIImage to Data")
+
+    guard let resizedImage = FileOps.resizeImage(image: image, maxPixelSize: 1024), let imageData = resizedImage.jpegData(compressionQuality: 0.9) else {
+      print("Failed to resize image UIImage to Data")
       return
     }
+
+    // Convert UIImage to Data
+//    guard let imageData = image.jpegData(compressionQuality: 0.9) else {
+//      print("Failed to convert UIImage to Data")
+//      return
+//    }
 
     // Create a unique filename for the image
     let fileName = UUID().uuidString
@@ -247,6 +252,92 @@ final class FirebaseService {
     }
   }
 
+ class func getMaskImageDownloadUrl(from urlString: String, completion: @escaping (Result<String, Error>) -> Void) {
+    // Extract the original filename from the URL
+    guard let originalFileName = urlString.extractFileName() else {
+      print("Failed to extract filename from URL.")
+      completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to extract filename from URL"])))
+      return
+    }
+
+    // Modify the filename to append '_mask' before the file extension
+    let maskFileName = originalFileName.replacingOccurrences(of: ".jpg", with: "_mask.jpg")
+
+    // Create the reference for the mask image in Firebase Storage
+    let storageRef = Storage.storage().reference().child("promptImages/\(maskFileName)")
+
+    // Get the download URL for the mask image
+    storageRef.downloadURL { url, error in
+      if let error = error {
+        print("Failed to get download URL for mask image: \(error.localizedDescription)")
+        completion(.failure(error))
+      } else if let downloadUrl = url?.absoluteString {
+        print("Successfully retrieved mask image URL: \(downloadUrl)")
+        completion(.success(downloadUrl))
+      }
+    }
+  }
+  
+  class func overrideImageAndCreateMask(from urlString: String, newImage: UIImage, maskImage: UIImage?, completion: @escaping (Result<Void, Error>) -> Void) {
+    // Extract the filename from the URL
+
+    guard let resizedImage = FileOps.resizeImage(image: newImage, maxPixelSize: 1024), let imageData = resizedImage.jpegData(compressionQuality: 0.9) else {
+      print("Failed to resize image UIImage to Data")
+      completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to resize image UIImage to Data"])))
+      return
+    }
+
+    guard let fileName = urlString.extractFileName() else {
+      print("Failed to extract filename from URL")
+      completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to extract filename from URL"])))
+      return
+    }
+
+    print("Override image and create mask for: \(fileName)")
+
+    // Create the reference for the original image (based on the extracted filename)
+    let storageRef = Storage.storage().reference().child("promptImages/\(fileName)")
+
+    // Upload the new image to override the existing one
+    storageRef.putData(imageData, metadata: nil) { metadata, error in
+      if let error = error {
+        print("Failed to upload new image to Firebase Storage: \(error.localizedDescription)")
+        completion(.failure(error))
+        return
+      }
+
+      guard let maskImage = maskImage else {
+        print("No mask image")
+        completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "No mask image, return and dont save mask image"])))
+        return
+      }
+
+      // Now create the "_mask" image
+      let maskFileName = fileName.replacingOccurrences(of: ".jpg", with: "_mask.jpg")
+      let maskStorageRef = Storage.storage().reference().child("promptImages/\(maskFileName)")
+
+      // Convert the mask image to Data
+      guard let maskImageData = maskImage.jpegData(compressionQuality: 0.9) else {
+        print("Failed to convert mask image to Data")
+        completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to convert mask image to Data"])))
+        return
+      }
+
+      // Upload the mask image
+      maskStorageRef.putData(maskImageData, metadata: nil) { metadata, error in
+        if let error = error {
+          print("Failed to upload mask image to Firebase Storage: \(error.localizedDescription)")
+          completion(.failure(error))
+          return
+        }
+
+        print("Successfully uploaded new image and mask.")
+        completion(.success(())) // Successful completion
+      }
+    }
+  }
+
+  
   class func updatePromptAndOptions(db: Firestore?, documentID: String, type: String, newPrompt: String, newOptions: [String], completion: @escaping (Error?) -> Void) {
     guard let db = db else {
       print("Firestore database reference is nil")
@@ -285,17 +376,9 @@ final class FirebaseService {
 
   class func deletePrompt(db: Firestore?, type: String, documentID: String, completion: @escaping (Result<Void, Error>) -> Void) {
     guard let db = db else {print("G. get tut"); return }
-
-    print("delete 1")
-    print(type)
-    print(documentID)
-    // Reference to the document to delete
     let docRef = db.collection("prompts").document(type).collection("prompt").document(documentID)
-    print("delete 2")
-    
-    // Perform the deletion
+
     docRef.delete { error in
-      print("delete 3")
       if let error = error {
         print("Failed to delete document: \(error.localizedDescription)")
         completion(.failure(error))
@@ -306,6 +389,28 @@ final class FirebaseService {
     }
   }
 
+  class func deleteImageFromStorage(downloadURL: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    // Extract the filename from the download URL using the provided extractFileName function
+    guard let originalFileName = downloadURL.extractFileName() else {
+      print("Failed to extract filename from URL.")
+      completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to extract filename from URL"])))
+      return
+    }
+
+    // Assuming the file is stored in "promptImages/" directory in Firebase Storage
+    let storageRef = Storage.storage().reference().child("promptImages/\(originalFileName)")
+
+    // Delete the file from Firebase Storage
+    storageRef.delete { error in
+      if let error = error {
+        print("Failed to delete image from Firebase Storage: \(error.localizedDescription)")
+        completion(.failure(error))
+      } else {
+        print("Image successfully deleted from Firebase Storage")
+        completion(.success(()))
+      }
+    }
+  }
 
   class func downloadPromptData(db: Firestore?, type: String) async throws -> [CreatedPrompt]? {
     guard let db = db else {print("G. get tut"); return nil }
@@ -382,7 +487,6 @@ final class FirebaseService {
       }
     }
   }
-
 
   class func uploadZipAndStartTraining(userId: String, modelName: String, zipFileURL: URL, completion: @escaping (Result<URL, Error>) -> Void) {
     // Create a reference to Firebase Storage
