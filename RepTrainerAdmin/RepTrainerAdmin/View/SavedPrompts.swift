@@ -20,10 +20,21 @@ struct SavedPromptsView: View {
   @State private var isEditingOrder: Bool = false
   @State private var selectedOptions: [String] = []
 
+  @State private var countPromptNumber: Int = 0
+
   func getNumber() -> Int {
     let has = observer.createdPromptsList.count
     let goal = 18
     return (goal - has) > 0 ? (goal - has) : 1
+  }
+
+  func countPormpts() {
+    countPromptNumber = 0
+    for prompt in observer.createdPromptsList {
+      if displayFromPromptOptions(promptOptions: prompt.options) {
+        countPromptNumber = countPromptNumber + 1
+      }
+    }
   }
 
   func moveItemAndUpdateFirestore(fromOffsets indices: IndexSet, toOffset newOffset: Int) {
@@ -41,6 +52,7 @@ struct SavedPromptsView: View {
     } else {
       selectedOptions.append(option.rawValue)  // Add if not selected
     }
+    countPormpts()
   }
 
   func isSelected(_ option: PromptOptions) -> Bool {
@@ -110,6 +122,7 @@ struct SavedPromptsView: View {
       }
 
       if !isEditingOrder {
+        
         ScrollView(Axis.Set.vertical, showsIndicators: false) {
           LazyVGrid(columns: [.init(.adaptive(minimum: 100, maximum: .infinity), spacing: 5)] , spacing: 5) {
             ForEach( observer.createdPromptsList, id: \.self ) { prompt in
@@ -155,7 +168,7 @@ struct SavedPromptsView: View {
     }.onAppear{
       self.observer.getCreatedPrompts()
     }
-    .navigationBarTitle("Saved Photo Copies (\(observer.createdPromptsList.count))", displayMode: .inline)
+    .navigationBarTitle("Saved Photo Copies (\(countPromptNumber)", displayMode: .inline)
 
     .sheet(isPresented: $showDetailSheet) {
       SavedPromptDetail(showNavigationSheet: $showDetailSheet, url: $detailUrl, prompt: $fixPrompt, options: $options, requestId: $requestId )

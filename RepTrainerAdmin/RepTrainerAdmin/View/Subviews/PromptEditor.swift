@@ -19,36 +19,37 @@ struct PromptEditor: View {
   var body: some View {
     VStack {
 
-        HStack{
-          Spacer().frame(width: 30, height: 30)
-          
-          Button(action: {
-            isTextFieldFocused = false
-          }) {
-            SmallButtonNoBackground(text: "Close keyboard", icon: "keyboard")
-          }.opacity(isTextFieldFocused ? 1 : 0.3)
+//        HStack{
+//          Spacer().frame(width: 30, height: 30)
+//          
+//          Button(action: {
+//            isTextFieldFocused = false
+//          }) {
+//            SmallButtonNoBackground(text: "Close keyboard", icon: "keyboard")
+//          }.opacity(isTextFieldFocused ? 1 : 0.3)
+//
+//          Spacer()
+//
+//          Button(action: {
+//            showPromtpEditorSheet = false
+//          }) {
+//            Image(systemName: "xmark")
+//              .foregroundColor(Color.basicText)
+//              .font(Font.system(size: 30, weight: .regular))
+//          }
+//
+//          Spacer().frame(width: 30, height: 30)
+//        }
 
-          Spacer()
 
-          Button(action: {
-            showPromtpEditorSheet = false
-          }) {
-            Image(systemName: "xmark.circle")
-              .foregroundColor(Color.white)
-              .font(Font.system(size: 30, weight: .regular))
-          }
-
-          Spacer().frame(width: 30, height: 30)
-        }
-
-
-      Spacer().frame(width: 120, height: 60)
+      Spacer().frame(width: 30, height: 20)
 
       HStack{
         Button(action: {
           insertTextAtCursor(" ###trigger### ")
         }) {
-          SmallButtonNoBackground(text: "Add trigger", icon: "text.insert")
+          SmallButtonNoBackground(text: "Trigger", icon: "arrow.right")
+            .scaleEffect(1.3)
         }
 
         Spacer()
@@ -56,18 +57,23 @@ struct PromptEditor: View {
         Button(action: {
           insertTextAtCursor(" ###addition### ")
         }) {
-          SmallButtonNoBackground(text: "Add addition", icon: "text.insert")
+          SmallButtonNoBackground(text: "Addition", icon: "arrow.right")
+            .scaleEffect(1.3)
         }
 
         Spacer()
 
         Button(action: {
-          insertTextAtCursor(" ###age### ")
+          insertTextAtCursor("w###age###")
         }) {
-          SmallButtonNoBackground(text: "Add age", icon: "text.insert")
+          SmallButtonNoBackground(text: "Age", icon: "arrow.right")
+            .scaleEffect(1.3)
         }
 
       }.padding(.horizontal, 20)
+
+
+      Spacer().frame(width: 120, height: 50)
 
       // Custom TextEditor with cursor management
       CustomTextView(text: $text, selectedRange: $selectedRange)

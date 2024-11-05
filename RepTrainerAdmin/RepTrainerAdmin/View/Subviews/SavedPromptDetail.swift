@@ -27,7 +27,7 @@ struct SavedPromptDetail: View {
   @State private var maskUrlString: String = ""
   @State private var showMask: Bool = true
 
-  func  startDownload() {
+  func startDownload() {
     _ = Task {
       await downloadUIImage()
     }
@@ -144,7 +144,14 @@ struct SavedPromptDetail: View {
         Spacer().frame(width: 10, height: 30)
 
         HStack{
+          Spacer().frame(width: 10, height: 10)
+
+          ShareLink(item: downloalImage, preview: SharePreview("Image Copy", image: downloalImage )) {
+            SmallButton(text: "Download", icon: "arrow.down.square")
+              .opacity(downloadedUIImageState ? 1 : 0.5)
+          }
           Spacer()
+
           Button(action: {
             showNavigationSheet = false
           }) {
@@ -169,7 +176,12 @@ struct SavedPromptDetail: View {
               .onAppear{
                 setDownloadImage(image: image)
               }
-              .zoomable()
+              .overlay {
+                ShareLink(item: downloalImage, preview: SharePreview("Image Copy", image: downloalImage )) {
+                  Circle()
+                    .fill(Color.clear)
+                }
+              }
           } placeholder: {
             ZStack{
               LoadingImageProgressSaved()
@@ -193,6 +205,8 @@ struct SavedPromptDetail: View {
             }
           }
         }
+
+
 
         Spacer().frame(width: 10, height: 30)
 
@@ -220,6 +234,9 @@ struct SavedPromptDetail: View {
           ButtonDefaultShape(buttonType: .setAsPromptDemo)
         }
         .opacity(downloadedUIImageState ? 1 : 0.5)
+
+
+
 
         VStack{
 

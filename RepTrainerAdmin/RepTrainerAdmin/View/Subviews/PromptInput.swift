@@ -60,9 +60,6 @@ struct PromptInput: View {
 
           Spacer().frame(width: 10, height: 40)
 
-
-
-
         }
       }
     }

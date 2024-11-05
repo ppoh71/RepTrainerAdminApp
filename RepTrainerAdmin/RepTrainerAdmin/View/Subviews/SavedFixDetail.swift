@@ -14,7 +14,6 @@ struct SavedFixDetail: View {
   @Binding var thumbnail: UIImage
   @Binding var fixId: String
   @Binding var prompt: String
-
   @State private var downloalImage = Image(uiImage: UIImage())
   @State private var showDownload: Bool = false
 
@@ -22,7 +21,6 @@ struct SavedFixDetail: View {
     downloalImage = image
     showDownload = true
   }
-
 
     var body: some View {
       ScrollView(Axis.Set.vertical, showsIndicators: false) {

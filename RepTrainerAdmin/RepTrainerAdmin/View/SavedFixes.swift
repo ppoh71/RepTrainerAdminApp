@@ -40,6 +40,7 @@ struct SavedFixes: View {
 
       Spacer().frame(width: 10, height: 60)
 
+
       LazyVGrid(columns: [.init(.adaptive(minimum: 100, maximum: .infinity), spacing: 5)] , spacing: 5) {
 
         ForEach(observer.savedFixes, id: \.self) { fix in

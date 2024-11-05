@@ -216,15 +216,36 @@ struct FixViewProgressReady: View {
         Spacer().frame(width: 10, height: 20)
 
         HStack{
+
           Button(action: {
-            observer.startBaseImageGeneration()
-            observer.fixModel.baseImage = UIImage()
+            observer.startNewPromptRequest(prompt: observer.fixModel.prompt)
           }) {
-            SmallButtonNoBackground(text: "Re-Run Base Image", icon: "play")
+            SmallButtonNoBackground(text: "Re Prompt", icon: "play")
           }
           if observer.isLoading {
             ProgressView()
           }
+
+          Button(action: {
+            observer.setNewFixModelForNewImage(originalImage: observer.fixModel.baseImage ?? UIImage())
+            observer.startRequest()
+          }) {
+            SmallButtonNoBackground(text: "Prompt BaseImage", icon: "play")
+          }
+          if observer.isLoading {
+            ProgressView()
+          }
+          Button(action: {
+            observer.startBaseImageGeneration()
+            observer.fixModel.baseImage = UIImage()
+          }) {
+            SmallButtonNoBackground(text: "Re BaseImage", icon: "play")
+          }
+          if observer.isLoading {
+            ProgressView()
+          }
+
+
         }
 
         Spacer().frame(width: 10, height: 40)

@@ -119,3 +119,37 @@ extension Double {
   }
 }
 
+extension Array {
+  func chunked(into numberOfChunks: Int) -> [[Element]] {
+    // Ensure numberOfChunks is greater than zero
+    guard numberOfChunks > 0 else {
+      print("Error: numberOfChunks must be greater than zero.")
+      return []
+    }
+    // Ensure the array is not empty
+    guard !self.isEmpty else {
+      return []
+    }
+    // Calculate chunk size
+    let chunkSize = Int(ceil(Double(self.count) / Double(numberOfChunks)))
+    // Ensure chunkSize is not zero
+    guard chunkSize > 0 else {
+      return []
+    }
+    // Split the array into chunks
+    return stride(from: 0, to: self.count, by: chunkSize).map { index in
+      Array(self[index..<Swift.min(index + chunkSize, self.count)])
+    }
+  }
+
+  // Extension to chunk the array into groups of 3
+  func chunkArray(into size: Int) -> [[Element]] {
+    var chunks: [[Element]] = []
+    for index in stride(from: 0, to: count, by: size) {
+      let chunk = Array(self[index..<Swift.min(index + size, count)])
+      chunks.append(chunk)
+    }
+    return chunks
+  }
+
+}
